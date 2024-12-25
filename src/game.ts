@@ -13,6 +13,7 @@ export class Game extends HTMLElement {
     config: GameConfig
     controls?: Controls;
     manager?: BucketManager;
+    configPanel?: ConfigPanel;
 
     constructor(config: GameConfig) {
         super();
@@ -24,7 +25,9 @@ export class Game extends HTMLElement {
         this.append(this.controls);
         this.manager = new BucketManager(this);
         this.append(this.manager);
-        this.append(new ConfigPanel(this));
+        this.configPanel = new ConfigPanel(this);
+        this.configPanel.hide();
+        this.append(this.configPanel);
         this.resetGame();
         this.triggerUpdate();
     }

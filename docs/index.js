@@ -277,6 +277,10 @@
             this.resetBtn.textContent = '🔄 Reset';
             this.resetBtn.addEventListener('click', () => this.game.resetGame());
             this.append(this.resetBtn);
+            const configBtn = document.createElement('button');
+            configBtn.textContent = '⚙️';
+            configBtn.addEventListener('click', () => this.game.configPanel?.show());
+            this.append(configBtn);
             this.triggerUpdate();
         }
     }
@@ -389,6 +393,12 @@
             super();
             this.game = game;
         }
+        show() {
+            this.classList.remove('hide');
+        }
+        hide() {
+            this.classList.add('hide');
+        }
         connectedCallback() {
             const wrap = document.createElement('div');
             wrap.classList.add('config-wrap');
@@ -425,6 +435,12 @@
                     this.game.resetGame();
                 }
             }));
+            const closeBtn = document.createElement('button');
+            closeBtn.textContent = '⬇️ Close';
+            closeBtn.addEventListener('click', () => {
+                this.hide();
+            });
+            wrap.append(closeBtn);
             this.append(wrap);
         }
     }
@@ -433,6 +449,7 @@
         config;
         controls;
         manager;
+        configPanel;
         constructor(config) {
             super();
             this.config = config;
@@ -442,7 +459,9 @@
             this.append(this.controls);
             this.manager = new BucketManager(this);
             this.append(this.manager);
-            this.append(new ConfigPanel(this));
+            this.configPanel = new ConfigPanel(this);
+            this.configPanel.hide();
+            this.append(this.configPanel);
             this.resetGame();
             this.triggerUpdate();
         }

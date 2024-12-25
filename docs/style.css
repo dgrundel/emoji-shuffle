@@ -126,7 +126,7 @@ emoji-game-config {
         background-color: #fff;
         border: var(--border-width) solid;
         border-radius: var(--border-radius);
-        padding: 2rem;
+        padding: 2rem 3rem 1rem;
         gap: 1.5rem;
         font-size: 1.2rem;
         background-color: #FBDA61;
@@ -141,6 +141,10 @@ emoji-game-config {
             }
         }
     }
+
+    &.hide {
+        display: none;
+    }
 }
 
 button {
@@ -148,7 +152,7 @@ button {
     color: #fff;
     background-color: #b95de2;
     padding: 1rem;
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     border-radius: 1.3rem;
     border: var(--border-width) solid #8844a7;
     border-top-width: 0;

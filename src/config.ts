@@ -9,6 +9,14 @@ export class ConfigPanel extends HTMLElement {
         this.game = game;
     }
 
+    show() {
+        this.classList.remove('hide');
+    }
+
+    hide() {
+        this.classList.add('hide');
+    }
+
     connectedCallback() {
         const wrap = document.createElement('div');
         wrap.classList.add('config-wrap');
@@ -48,6 +56,13 @@ export class ConfigPanel extends HTMLElement {
                 this.game.resetGame();
             }
         }));
+
+        const closeBtn = document.createElement('button');
+        closeBtn.textContent = '⬇️ Close';
+        closeBtn.addEventListener('click', () => {
+            this.hide();
+        });
+        wrap.append(closeBtn);
 
         this.append(wrap);
     }
