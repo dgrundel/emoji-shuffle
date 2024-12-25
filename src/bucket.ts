@@ -1,6 +1,5 @@
 import { getChildren } from './utils';
 import { Bubble } from './bubble';
-import { Game } from './game';
 import { BucketManager } from './bucketManager';
 
 export class Bucket extends HTMLElement {

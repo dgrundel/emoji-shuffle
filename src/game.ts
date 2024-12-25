@@ -1,7 +1,3 @@
-import { doTimes, takeRandom, getChildren, clearChildren, animate } from './utils';
-import { Bubble } from './bubble';
-import { Bucket } from './bucket';
-import { Confetti } from './confetti';
 import { Controls } from './controls';
 import { BucketManager } from './bucketManager';
 
