@@ -201,6 +201,7 @@
             else {
                 this.select();
             }
+            this.manager.game.triggerUpdate();
         }
         select() {
             const bubbles = getChildren(this, Bubble);
@@ -240,26 +241,36 @@
 
     class Controls extends HTMLElement {
         game;
+        undoBtn;
+        resetBtn;
         constructor(game) {
             super();
             this.game = game;
         }
+        triggerUpdate() {
+            if (this.undoBtn) {
+                this.undoBtn.disabled = this.game.manager?.undos.length === 0;
+            }
+        }
         connectedCallback() {
-            const undoBtn = document.createElement('button');
-            undoBtn.textContent = '↩️ Undo';
-            // undoBtn.addEventListener('click', () => this.game.resetGame());
-            undoBtn.disabled = true;
-            this.append(undoBtn);
-            const resetBtn = document.createElement('button');
-            resetBtn.textContent = '🔄 Reset';
-            resetBtn.addEventListener('click', () => this.game.resetGame());
-            this.append(resetBtn);
+            this.undoBtn = document.createElement('button');
+            this.undoBtn.textContent = '↩️ Undo';
+            this.undoBtn.addEventListener('click', () => {
+                this.game.manager?.undo();
+            });
+            this.append(this.undoBtn);
+            this.resetBtn = document.createElement('button');
+            this.resetBtn.textContent = '🔄 Reset';
+            this.resetBtn.addEventListener('click', () => this.game.resetGame());
+            this.append(this.resetBtn);
+            this.triggerUpdate();
         }
     }
 
     class BucketManager extends HTMLElement {
         game;
         config;
+        undos = [];
         constructor(game) {
             super();
             this.game = game;
@@ -274,6 +285,7 @@
         }
         resetBuckets() {
             clearChildren(this);
+            this.undos = [];
             this.generateBuckets();
         }
         generateBuckets() {
@@ -337,28 +349,44 @@
                 return;
             }
             const movables = selected.slice(0, moves);
+            this.undos.push(async () => animate(movables, async () => {
+                movables.forEach(m => src.prepend(m));
+            }));
             return animate(movables, async () => {
                 movables.forEach(m => dest.prepend(m));
             });
+        }
+        async undo() {
+            const fn = this.undos.pop();
+            if (fn) {
+                await fn();
+                this.game.triggerUpdate();
+            }
         }
     }
 
     class Game extends HTMLElement {
         config;
+        controls;
         manager;
         constructor(config) {
             super();
             this.config = config;
         }
         connectedCallback() {
-            const manager = new BucketManager(this);
-            this.manager = manager;
-            this.append(manager);
-            this.append(new Controls(this));
+            this.controls = new Controls(this);
+            this.append(this.controls);
+            this.manager = new BucketManager(this);
+            this.append(this.manager);
             this.resetGame();
+            this.triggerUpdate();
+        }
+        triggerUpdate() {
+            this.controls?.triggerUpdate();
         }
         resetGame() {
             this.manager?.resetBuckets();
+            this.triggerUpdate();
         }
     }
 

@@ -29,6 +29,7 @@ export class Bucket extends HTMLElement {
         } else {
             this.select();
         }
+        this.manager.game.triggerUpdate();
     }
 
     select() {

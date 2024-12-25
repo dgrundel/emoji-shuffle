@@ -7,6 +7,7 @@ import { animate, clearChildren, doTimes, getChildren, takeRandom } from "./util
 export class BucketManager extends HTMLElement {
     game: Game;
     config: GameConfig;
+    undos: (() => Promise<void>)[] = [];
 
     constructor(game: Game) {
         super()
@@ -26,6 +27,7 @@ export class BucketManager extends HTMLElement {
 
     resetBuckets() {
         clearChildren(this);
+        this.undos = [];
         this.generateBuckets();
     }
 
@@ -101,8 +103,21 @@ export class BucketManager extends HTMLElement {
         }
         
         const movables = selected.slice(0, moves);
+        
+        this.undos.push(async () => animate(movables, async () => {
+            movables.forEach(m => src.prepend(m));
+        }));
+        
         return animate(movables, async () => {
             movables.forEach(m => dest.prepend(m));
         });
+    }
+
+    async undo() {
+        const fn = this.undos.pop();
+        if (fn) {
+            await fn();
+            this.game.triggerUpdate();
+        }
     }
 }

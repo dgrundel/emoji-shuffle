@@ -15,12 +15,16 @@ emoji-game {
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 1fr auto;
+    grid-template-areas: 
+        "buckets"
+        "controls";
 }
 
 emoji-bucket-manager {
     --bubble-size: 2.8rem;
     --bubble-margin: .3rem;
 
+    grid-area: buckets;
     align-content: center;
     text-align: center;
 }
@@ -84,6 +88,8 @@ confetti-shower {
 }
 
 emoji-game-controls {
+    grid-area: controls;
+
     text-align: center;
     padding: 1rem;
     z-index: 100;

@@ -14,6 +14,7 @@ export interface GameConfig {
 
 export class Game extends HTMLElement {
     config: GameConfig
+    controls?: Controls;
     manager?: BucketManager;
 
     constructor(config: GameConfig) {
@@ -22,14 +23,20 @@ export class Game extends HTMLElement {
     }
 
     connectedCallback() {
-        const manager = new BucketManager(this);
-        this.manager = manager;
-        this.append(manager);
-        this.append(new Controls(this));
+        this.controls = new Controls(this);
+        this.append(this.controls);
+        this.manager = new BucketManager(this);
+        this.append(this.manager);
         this.resetGame();
+        this.triggerUpdate();
+    }
+
+    triggerUpdate() {
+        this.controls?.triggerUpdate();
     }
 
     resetGame() {
         this.manager?.resetBuckets();
+        this.triggerUpdate();
     }
 }
