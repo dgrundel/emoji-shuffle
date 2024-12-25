@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 const emoji = ['🔥', '🙌', '💯', '😱', '🍪', '💖', '🍕', '🎁', '💀', '🔵', '🟣', '🟤', '✅'];
 const doTimes = (n, fn) => {
     for (let i = 0; i < n; i++) {
@@ -19,9 +28,29 @@ const clearChildren = (node) => {
         node.removeChild(node.lastChild);
     }
 };
-function randomFromTo(from, to) {
+const randomFromTo = (from, to) => {
     return Math.floor(Math.random() * (to - from + 1) + from);
-}
+};
+const animate = (nodes, fn) => __awaiter(void 0, void 0, void 0, function* () {
+    let maxDuration = 0;
+    nodes.forEach(n => {
+        const style = getComputedStyle(n);
+        const duration = parseInt(style.getPropertyValue('--transition-duration'));
+        if (!isNaN(duration)) {
+            // assumining milliseconds
+            maxDuration = Math.max(duration, maxDuration);
+        }
+        n.dataset.prevTransform = n.style.transform;
+        n.style.transform = 'scale(0.0)';
+    });
+    yield new Promise(r => setTimeout(r, maxDuration));
+    yield fn();
+    yield new Promise(r => setTimeout(r, maxDuration));
+    nodes.forEach(n => {
+        n.style.transform = n.dataset.prevTransform || '';
+        n.dataset.prevTransform = undefined;
+    });
+});
 class Bubble extends HTMLElement {
     constructor(label) {
         super();
@@ -50,15 +79,17 @@ class Bucket extends HTMLElement {
         this.prepend(b);
     }
     onClick(e) {
-        if (this.game.hasSelection()) {
-            this.game.tryMoveTo(this);
-            this.game.deselect();
-            this.checkSuccess();
-            this.game.checkSuccess();
-        }
-        else {
-            this.select();
-        }
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.game.hasSelection()) {
+                yield this.game.tryMoveTo(this);
+                this.game.deselect();
+                this.checkSuccess();
+                this.game.checkSuccess();
+            }
+            else {
+                this.select();
+            }
+        });
     }
     select() {
         const bubbles = getChildren(this, Bubble);
@@ -145,25 +176,35 @@ class Game extends HTMLElement {
             .every(b => b.checkSuccess());
         if (success) {
             const confetti = new Confetti();
-            document.body.append(confetti);
+            this.append(confetti);
         }
     }
     tryMoveTo(dest) {
-        const src = getChildren(this, Bucket).find(b => b.hasSelection());
-        if (!src) {
-            console.error('Tried to move but there was no selection.');
-            return;
-        }
-        const selected = getChildren(src, Bubble).filter(b => b.isSelected());
-        const existing = getChildren(dest, Bubble);
-        const available = this.config.bucketHeight - existing.length;
-        const moves = Math.min(available, selected.length);
-        if (moves === 0) {
-            // would be cool to do a little shake animation here.
-            return;
-        }
-        doTimes(moves, () => {
-            dest.prepend(selected.shift());
+        return __awaiter(this, void 0, void 0, function* () {
+            const src = getChildren(this, Bucket).find(b => b.hasSelection());
+            if (!src) {
+                console.error('Tried to move but there was no bucket.');
+                return;
+            }
+            const selected = getChildren(src, Bubble).filter(b => b.isSelected());
+            if (selected.length === 0) {
+                console.error('Tried to move but there was no selection.');
+                return;
+            }
+            const existing = getChildren(dest, Bubble);
+            if (existing.length !== 0 && existing[0].textContent !== selected[0].textContent) {
+                return;
+            }
+            const available = this.config.bucketHeight - existing.length;
+            const moves = Math.min(available, selected.length);
+            if (moves === 0) {
+                // would be cool to do a little shake animation here.
+                return;
+            }
+            const movables = selected.slice(0, moves);
+            return animate(movables, () => __awaiter(this, void 0, void 0, function* () {
+                movables.forEach(m => dest.prepend(m));
+            }));
         });
     }
 }

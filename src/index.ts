@@ -23,8 +23,30 @@ const clearChildren = (node: Node) => {
     }
 }
 
-function randomFromTo(from: number, to: number) {
+const randomFromTo = (from: number, to: number) => {
     return Math.floor(Math.random() * (to - from + 1) + from);
+}
+
+const animate = async (nodes: HTMLElement[], fn: () => Promise<void>): Promise<void> => {
+    
+    let maxDuration = 0;
+    nodes.forEach(n => {
+        const style = getComputedStyle(n);
+        const duration = parseInt(style.getPropertyValue('--transition-duration'));
+        if (!isNaN(duration)) {
+            // assumining milliseconds
+            maxDuration = Math.max(duration, maxDuration);
+        }
+        n.dataset.prevTransform = n.style.transform;
+        n.style.transform = 'scale(0.0)';
+    });
+    await new Promise(r => setTimeout(r, maxDuration));
+    await fn();
+    await new Promise(r => setTimeout(r, maxDuration));
+    nodes.forEach(n => {
+        n.style.transform = n.dataset.prevTransform || '';
+        n.dataset.prevTransform = undefined;
+    });
 }
 
 class Bubble extends HTMLElement {    
@@ -65,9 +87,9 @@ class Bucket extends HTMLElement {
         this.prepend(b);
     }
 
-    onClick(e: MouseEvent) {
+    async onClick(e: MouseEvent) {
         if (this.game.hasSelection()) {
-            this.game.tryMoveTo(this);
+            await this.game.tryMoveTo(this);
             this.game.deselect();
             this.checkSuccess();
             this.game.checkSuccess();
@@ -185,18 +207,26 @@ class Game extends HTMLElement {
             .every(b => b.checkSuccess());
         if (success) {
             const confetti = new Confetti();
-            document.body.append(confetti);
+            this.append(confetti);
         }
     }
 
-    tryMoveTo(dest: Bucket) {
+    async tryMoveTo(dest: Bucket) {
         const src = getChildren(this, Bucket).find(b => b.hasSelection());
         if (!src) {
-            console.error('Tried to move but there was no selection.');
+            console.error('Tried to move but there was no bucket.');
             return;
         }
         const selected = getChildren(src, Bubble).filter(b => b.isSelected());
+        if (selected.length === 0) {
+            console.error('Tried to move but there was no selection.');
+            return;
+        }
         const existing = getChildren(dest, Bubble);
+        if (existing.length !== 0 && existing[0].textContent !== selected[0].textContent) {
+            return;
+        }
+
         const available = this.config.bucketHeight - existing.length;
         const moves = Math.min(available, selected.length);
         if (moves === 0) {
@@ -204,8 +234,9 @@ class Game extends HTMLElement {
             return;
         }
         
-        doTimes(moves, () => {
-            dest.prepend(selected.shift()!);
+        const movables = selected.slice(0, moves);
+        return animate(movables, async () => {
+            movables.forEach(m => dest.prepend(m));
         });
     }
 }

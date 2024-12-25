@@ -33,8 +33,8 @@ emoji-game-bucket {
     background-color: rgba(255, 255, 255, 0.4);
     border: .4rem solid rgba(63, 63, 63, 0.46);
     border-top-width: 0;
-    border-bottom-right-radius: var(--bubble-size);
-    border-bottom-left-radius: var(--bubble-size);
+    border-bottom-right-radius: 1rem;
+    border-bottom-left-radius: 1rem;
     transition: transform 100ms ease-in-out;
 
     &:hover {
@@ -50,6 +50,8 @@ emoji-game-bucket {
 }
 
 emoji-game-bubble {
+    --transition-duration: 100ms;
+
     font-size: 2.9rem;
     width: var(--bubble-size);
     height: var(--bubble-size);
@@ -59,7 +61,7 @@ emoji-game-bubble {
     text-align: center;
     align-content: center;
     margin: 0 var(--bubble-margin) var(--bubble-margin);
-    transition: transform 100ms ease-in-out;
+    transition: transform var(--transition-duration) ease-in-out;
 
     &.selected {
         transform: scale(1.6) rotate(-20deg);
@@ -72,4 +74,5 @@ confetti-shower {
     left: 0;
     bottom: 0;
     right: 0;
+    z-index: 99;
 }
