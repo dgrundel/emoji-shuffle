@@ -1,14 +1,15 @@
 import { getChildren } from './utils';
 import { Bubble } from './bubble';
 import { Game } from './game';
+import { BucketManager } from './bucketManager';
 
 export class Bucket extends HTMLElement {
     private static successClass = 'success';
-    game: Game;
+    manager: BucketManager;
 
-    constructor(game: Game) {
+    constructor(manager: BucketManager) {
         super();
-        this.game = game;
+        this.manager = manager;
     }
 
     connectedCallback() {
@@ -20,11 +21,11 @@ export class Bucket extends HTMLElement {
     }
 
     async onClick(e: MouseEvent) {
-        if (this.game.hasSelection()) {
-            await this.game.tryMoveTo(this);
-            this.game.deselect();
+        if (this.manager.hasSelection()) {
+            await this.manager.tryMoveTo(this);
+            this.manager.deselect();
             this.checkSuccess();
-            this.game.checkSuccess();
+            this.manager.checkSuccess();
         } else {
             this.select();
         }
@@ -59,7 +60,7 @@ export class Bucket extends HTMLElement {
 
     checkSuccess(): boolean {
         const bubbles = getChildren(this, Bubble);
-        if (bubbles.length !== this.game.config.bucketHeight) {
+        if (bubbles.length !== this.manager.config.bucketHeight) {
             this.classList.remove(Bucket.successClass);
             return false;
         }

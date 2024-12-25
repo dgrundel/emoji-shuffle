@@ -180,10 +180,10 @@
 
     class Bucket extends HTMLElement {
         static successClass = 'success';
-        game;
-        constructor(game) {
+        manager;
+        constructor(manager) {
             super();
-            this.game = game;
+            this.manager = manager;
         }
         connectedCallback() {
             this.addEventListener('click', this.onClick.bind(this));
@@ -192,11 +192,11 @@
             this.prepend(b);
         }
         async onClick(e) {
-            if (this.game.hasSelection()) {
-                await this.game.tryMoveTo(this);
-                this.game.deselect();
+            if (this.manager.hasSelection()) {
+                await this.manager.tryMoveTo(this);
+                this.manager.deselect();
                 this.checkSuccess();
-                this.game.checkSuccess();
+                this.manager.checkSuccess();
             }
             else {
                 this.select();
@@ -227,7 +227,7 @@
         }
         checkSuccess() {
             const bubbles = getChildren(this, Bubble);
-            if (bubbles.length !== this.game.config.bucketHeight) {
+            if (bubbles.length !== this.manager.config.bucketHeight) {
                 this.classList.remove(Bucket.successClass);
                 return false;
             }
@@ -247,7 +247,8 @@
         connectedCallback() {
             const undoBtn = document.createElement('button');
             undoBtn.textContent = '↩️ Undo';
-            undoBtn.addEventListener('click', () => this.game.resetGame());
+            // undoBtn.addEventListener('click', () => this.game.resetGame());
+            undoBtn.disabled = true;
             this.append(undoBtn);
             const resetBtn = document.createElement('button');
             resetBtn.textContent = '🔄 Reset';
@@ -256,17 +257,26 @@
         }
     }
 
-    class Game extends HTMLElement {
+    class BucketManager extends HTMLElement {
+        game;
         config;
-        constructor(config) {
+        constructor(game) {
             super();
-            this.config = config;
+            this.game = game;
+            this.config = game.config;
             this.setStyleProps();
         }
         setStyleProps() {
             this.style.setProperty('--bucket-height', `${this.config.bucketHeight}`);
         }
+        connectedCallback() {
+            this.resetBuckets();
+        }
         resetBuckets() {
+            clearChildren(this);
+            this.generateBuckets();
+        }
+        generateBuckets() {
             const emojiCandidates = this.config.emojiCandidates.slice();
             const bubbles = [];
             // generate all the bubbles we need
@@ -289,14 +299,6 @@
                 const b = new Bucket(this);
                 this.append(b);
             });
-        }
-        resetGame() {
-            clearChildren(this);
-            this.resetBuckets();
-            this.append(new Controls(this));
-        }
-        connectedCallback() {
-            this.resetGame();
         }
         hasSelection() {
             return getChildren(this, Bucket).some(b => b.hasSelection());
@@ -341,7 +343,27 @@
         }
     }
 
+    class Game extends HTMLElement {
+        config;
+        manager;
+        constructor(config) {
+            super();
+            this.config = config;
+        }
+        connectedCallback() {
+            const manager = new BucketManager(this);
+            this.manager = manager;
+            this.append(manager);
+            this.append(new Controls(this));
+            this.resetGame();
+        }
+        resetGame() {
+            this.manager?.resetBuckets();
+        }
+    }
+
     customElements.define('emoji-game', Game);
+    customElements.define('emoji-bucket-manager', BucketManager);
     customElements.define('emoji-game-controls', Controls);
     customElements.define('emoji-game-bucket', Bucket);
     customElements.define('emoji-game-bubble', Bubble);

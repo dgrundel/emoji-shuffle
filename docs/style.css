@@ -6,15 +6,21 @@ html, body {
 }
 
 emoji-game {
-    --bubble-size: 2.8rem;
-    --bubble-margin: .3rem;
-
     position: fixed;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
     
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr auto;
+}
+
+emoji-bucket-manager {
+    --bubble-size: 2.8rem;
+    --bubble-margin: .3rem;
+
     align-content: center;
     text-align: center;
 }
@@ -74,5 +80,43 @@ confetti-shower {
     left: 0;
     bottom: 0;
     right: 0;
-    z-index: 99;
+    z-index: 10;
+}
+
+emoji-game-controls {
+    text-align: center;
+    padding: 1rem;
+    z-index: 100;
+
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+button {
+    position: relative;
+    color: #fff;
+    background-color: #b95de2;
+    padding: 1rem;
+    font-size: 1.2rem;
+    font-variant-caps: all-small-caps;
+    font-weight: 600;
+    line-height: 1;
+    border-radius: 1.3rem;
+    border: .3rem solid #8844a7;
+    border-top-width: 0;
+    border-left-width: 0;
+
+    &:active {
+        transform: scale(0.96);
+    }
+    &:hover {
+        background-color: #b43ee9;
+    }
+    &:disabled {
+        color: #4e4e4e;
+        background-color: #9c9c9c;
+        border-color: #878787;
+        text-decoration: line-through;
+    }
 }
