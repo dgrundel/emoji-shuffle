@@ -2,6 +2,7 @@ import { doTimes, takeRandom, getChildren, clearChildren, animate } from './util
 import { Bubble } from './bubble';
 import { Bucket } from './bucket';
 import { Confetti } from './confetti';
+import { Controls } from './controls';
 
 export interface GameConfig {
     emojiCandidates: string[];
@@ -24,8 +25,6 @@ export class Game extends HTMLElement {
     }
 
     resetBuckets() {
-        clearChildren(this);
-
         const emojiCandidates = this.config.emojiCandidates.slice();
         const bubbles: Bubble[] = [];
 
@@ -55,8 +54,14 @@ export class Game extends HTMLElement {
         });
     }
 
-    connectedCallback() {
+    resetGame() {
+        clearChildren(this);
         this.resetBuckets();
+        this.append(new Controls(this));
+    }
+
+    connectedCallback() {
+        this.resetGame();
     }
 
     hasSelection(): boolean {

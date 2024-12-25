@@ -238,6 +238,24 @@
         }
     }
 
+    class Controls extends HTMLElement {
+        game;
+        constructor(game) {
+            super();
+            this.game = game;
+        }
+        connectedCallback() {
+            const undoBtn = document.createElement('button');
+            undoBtn.textContent = '↩️ Undo';
+            undoBtn.addEventListener('click', () => this.game.resetGame());
+            this.append(undoBtn);
+            const resetBtn = document.createElement('button');
+            resetBtn.textContent = '🔄 Reset';
+            resetBtn.addEventListener('click', () => this.game.resetGame());
+            this.append(resetBtn);
+        }
+    }
+
     class Game extends HTMLElement {
         config;
         constructor(config) {
@@ -249,7 +267,6 @@
             this.style.setProperty('--bucket-height', `${this.config.bucketHeight}`);
         }
         resetBuckets() {
-            clearChildren(this);
             const emojiCandidates = this.config.emojiCandidates.slice();
             const bubbles = [];
             // generate all the bubbles we need
@@ -273,8 +290,13 @@
                 this.append(b);
             });
         }
-        connectedCallback() {
+        resetGame() {
+            clearChildren(this);
             this.resetBuckets();
+            this.append(new Controls(this));
+        }
+        connectedCallback() {
+            this.resetGame();
         }
         hasSelection() {
             return getChildren(this, Bucket).some(b => b.hasSelection());
@@ -320,6 +342,7 @@
     }
 
     customElements.define('emoji-game', Game);
+    customElements.define('emoji-game-controls', Controls);
     customElements.define('emoji-game-bucket', Bucket);
     customElements.define('emoji-game-bubble', Bubble);
     customElements.define('confetti-shower', Confetti);
