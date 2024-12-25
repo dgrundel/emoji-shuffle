@@ -1,7 +1,12 @@
 {
-    "extends": "@tsconfig/recommended/tsconfig.json",
     "include": ["src/**/*"],
     "compilerOptions": {
-        "outDir": "dist"
+        "outDir": "dist",
+        "target": "ESNext",
+        "module": "ESNext",
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "strict": true,
+        "skipLibCheck": true
     }
 }
