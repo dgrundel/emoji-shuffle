@@ -26,7 +26,6 @@ export class Game extends HTMLElement {
         this.manager = new BucketManager(this);
         this.append(this.manager);
         this.configPanel = new ConfigPanel(this);
-        this.configPanel.hide();
         this.append(this.configPanel);
         this.resetGame();
         this.triggerUpdate();

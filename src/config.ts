@@ -7,6 +7,7 @@ export class ConfigPanel extends HTMLElement {
     constructor(game: Game) {
         super();
         this.game = game;
+        this.hide();
     }
 
     show() {
