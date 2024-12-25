@@ -45,16 +45,21 @@ emoji-game-bucket {
     justify-content: end;
 
     margin: .2rem;
-    padding-top: var(--bubble-margin);
+    /* padding-top: var(--bubble-margin); */
     height: calc((var(--bucket-height) * var(--bubble-size)) + ((var(--bucket-height) - 1) * var(--bubble-margin)));
     width: calc(var(--bubble-size) + (2 * var(--bubble-margin)));
 
     background-color: rgba(255, 255, 255, 0.4);
     border: var(--border-width) solid rgba(63, 63, 63, 0.46);
     border-top-width: 0;
-    border-bottom-right-radius: var(--border-radius);
-    border-bottom-left-radius: var(--border-radius);
     transition: transform 100ms ease-in-out;
+
+    --mask-depth: .65rem;
+    border-bottom-right-radius: calc(2rem + var(--mask-depth)) calc(1rem + var(--mask-depth));
+    border-bottom-left-radius: calc(2rem + var(--mask-depth)) calc(1rem + var(--mask-depth));
+    mask: radial-gradient(50% var(--mask-depth) at top,transparent 100%,black);
+    padding-top: calc(var(--bubble-margin) + var(--mask-depth));
+    padding-bottom: calc(var(--bubble-margin) / 2);
 
     &:hover {
         transform: scale(1.1);
