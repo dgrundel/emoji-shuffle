@@ -1,0 +1,19 @@
+{
+  "name": "emoji-sort-2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "rollup -c",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^12.1.2",
+    "@tsconfig/recommended": "^1.0.8",
+    "rollup": "^4.29.1",
+    "tslib": "^2.8.1",
+    "typescript": "^5.7.2"
+  }
+}
