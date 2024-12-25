@@ -195,8 +195,6 @@
             if (this.manager.hasSelection()) {
                 await this.manager.tryMoveTo(this);
                 this.manager.deselect();
-                this.checkSuccess();
-                this.manager.checkSuccess();
             }
             else {
                 this.select();
@@ -236,6 +234,9 @@
             const success = bubbles.every(b => b.textContent === first?.textContent);
             this.classList.toggle(Bucket.successClass, success);
             return success;
+        }
+        triggerUpdate() {
+            this.checkSuccess();
         }
     }
 
@@ -363,6 +364,10 @@
                 this.game.triggerUpdate();
             }
         }
+        triggerUpdate() {
+            getChildren(this, Bucket).forEach(b => b.triggerUpdate());
+            this.checkSuccess();
+        }
     }
 
     class Game extends HTMLElement {
@@ -383,6 +388,7 @@
         }
         triggerUpdate() {
             this.controls?.triggerUpdate();
+            this.manager?.triggerUpdate();
         }
         resetGame() {
             this.manager?.resetBuckets();

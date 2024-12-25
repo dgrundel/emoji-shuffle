@@ -120,4 +120,9 @@ export class BucketManager extends HTMLElement {
             this.game.triggerUpdate();
         }
     }
+
+    triggerUpdate() {
+        getChildren(this, Bucket).forEach(b => b.triggerUpdate());
+        this.checkSuccess();
+    }
 }

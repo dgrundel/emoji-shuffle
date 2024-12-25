@@ -24,8 +24,6 @@ export class Bucket extends HTMLElement {
         if (this.manager.hasSelection()) {
             await this.manager.tryMoveTo(this);
             this.manager.deselect();
-            this.checkSuccess();
-            this.manager.checkSuccess();
         } else {
             this.select();
         }
@@ -69,5 +67,9 @@ export class Bucket extends HTMLElement {
         const success = bubbles.every(b => b.textContent === first?.textContent);
         this.classList.toggle(Bucket.successClass, success);
         return success;
+    }
+
+    triggerUpdate() {
+        this.checkSuccess();
     }
 }

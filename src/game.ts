@@ -33,6 +33,7 @@ export class Game extends HTMLElement {
 
     triggerUpdate() {
         this.controls?.triggerUpdate();
+        this.manager?.triggerUpdate();
     }
 
     resetGame() {

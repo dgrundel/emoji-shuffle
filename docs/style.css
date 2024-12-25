@@ -91,7 +91,7 @@ emoji-game-controls {
     grid-area: controls;
 
     text-align: center;
-    padding: 1rem;
+    padding: 0 0 2.5rem;
     z-index: 100;
 
     display: flex;
