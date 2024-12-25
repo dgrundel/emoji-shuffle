@@ -9,7 +9,7 @@ customElements.define('emoji-game-bubble', Bubble);
 customElements.define('confetti-shower', Confetti);
 
 const gameConfig: GameConfig = { 
-    emojiCandidates: ['🔥', '🙌', '💯', '😱', '🍪', '💖', '🍕', '🎁', '💀', '🔵', '🟣', '🟤', '✅'],
+    emojiCandidates: ['🔥', '🙌', '💯', '😱', '🍪', '💖', '🍕', '🎁', '💀', '✨', '🎉', '👀', '🚀', '😍', '💎'],
     emojiCount: 7, 
     emptyCount: 2,
     bucketHeight: 4,
