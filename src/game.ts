@@ -1,5 +1,6 @@
 import { Controls } from './controls';
 import { BucketManager } from './bucketManager';
+import { ConfigPanel } from './config';
 
 export interface GameConfig {
     emojiCandidates: string[];
@@ -23,6 +24,7 @@ export class Game extends HTMLElement {
         this.append(this.controls);
         this.manager = new BucketManager(this);
         this.append(this.manager);
+        this.append(new ConfigPanel(this));
         this.resetGame();
         this.triggerUpdate();
     }

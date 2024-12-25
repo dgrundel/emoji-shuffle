@@ -13,8 +13,6 @@ export class BucketManager extends HTMLElement {
         super()
         this.game = game;
         this.config = game.config;
-
-        this.setStyleProps();
     }
 
     setStyleProps() {
@@ -27,6 +25,7 @@ export class BucketManager extends HTMLElement {
 
     resetBuckets() {
         clearChildren(this);
+        this.setStyleProps();
         this.undos = [];
         this.generateBuckets();
     }

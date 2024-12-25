@@ -160,6 +160,19 @@
             n.dataset.prevTransform = undefined;
         });
     };
+    const createRange = (opts) => {
+        const input = document.createElement('input');
+        input.type = 'range';
+        input.min = `${opts.min}`;
+        input.max = `${opts.max}`;
+        input.step = '1';
+        input.value = `${opts.value}`;
+        input.addEventListener('input', () => opts.handler(parseInt(input.value)));
+        const label = document.createElement('label');
+        label.textContent = opts.label;
+        label.append(input);
+        return label;
+    };
 
     class Bubble extends HTMLElement {
         static selectedClass = 'selected';
@@ -276,7 +289,6 @@
             super();
             this.game = game;
             this.config = game.config;
-            this.setStyleProps();
         }
         setStyleProps() {
             this.style.setProperty('--bucket-height', `${this.config.bucketHeight}`);
@@ -286,6 +298,7 @@
         }
         resetBuckets() {
             clearChildren(this);
+            this.setStyleProps();
             this.undos = [];
             this.generateBuckets();
         }
@@ -370,6 +383,52 @@
         }
     }
 
+    class ConfigPanel extends HTMLElement {
+        game;
+        constructor(game) {
+            super();
+            this.game = game;
+        }
+        connectedCallback() {
+            const wrap = document.createElement('div');
+            wrap.classList.add('config-wrap');
+            // emojis [5 - ?]
+            wrap.append(createRange({
+                label: 'Emoji Count',
+                min: 5,
+                max: this.game.config.emojiCandidates.length,
+                value: this.game.config.emojiCount,
+                handler: n => {
+                    this.game.config.emojiCount = n;
+                    this.game.resetGame();
+                }
+            }));
+            // spares [1-4]
+            wrap.append(createRange({
+                label: 'Spare Buckets',
+                min: 1,
+                max: 4,
+                value: this.game.config.emptyCount,
+                handler: n => {
+                    this.game.config.emptyCount = n;
+                    this.game.resetGame();
+                }
+            }));
+            // height [4 - 6]
+            wrap.append(createRange({
+                label: 'Bucket Height',
+                min: 3,
+                max: 6,
+                value: this.game.config.bucketHeight,
+                handler: n => {
+                    this.game.config.bucketHeight = n;
+                    this.game.resetGame();
+                }
+            }));
+            this.append(wrap);
+        }
+    }
+
     class Game extends HTMLElement {
         config;
         controls;
@@ -383,6 +442,7 @@
             this.append(this.controls);
             this.manager = new BucketManager(this);
             this.append(this.manager);
+            this.append(new ConfigPanel(this));
             this.resetGame();
             this.triggerUpdate();
         }
@@ -397,6 +457,7 @@
     }
 
     customElements.define('emoji-game', Game);
+    customElements.define('emoji-game-config', ConfigPanel);
     customElements.define('emoji-bucket-manager', BucketManager);
     customElements.define('emoji-game-controls', Controls);
     customElements.define('emoji-game-bucket', Bucket);

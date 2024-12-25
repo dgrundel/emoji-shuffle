@@ -22,7 +22,6 @@ export const clearChildren = (node: Node) => {
 }
 
 export const animate = async (nodes: HTMLElement[], fn: () => Promise<void>): Promise<void> => {
-    
     let maxDuration = 0;
     nodes.forEach(n => {
         const style = getComputedStyle(n);
@@ -41,4 +40,27 @@ export const animate = async (nodes: HTMLElement[], fn: () => Promise<void>): Pr
         n.style.transform = n.dataset.prevTransform || '';
         n.dataset.prevTransform = undefined;
     });
+}
+
+export interface CreateRangeOpts {
+    label: string;
+    min: number;
+    max: number;
+    value: number;
+    handler: (n: number) => void;
+}
+
+export const createRange = (opts: CreateRangeOpts): HTMLElement => {
+    const input = document.createElement('input');
+    input.type = 'range';
+    input.min = `${opts.min}`;
+    input.max = `${opts.max}`;
+    input.step = '1';
+    input.value = `${opts.value}`;
+    input.addEventListener('input', () => opts.handler(parseInt(input.value)));
+    
+    const label = document.createElement('label');
+    label.textContent = opts.label;
+    label.append(input);
+    return label;
 }
