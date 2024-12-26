@@ -51,7 +51,6 @@ emoji-game-bucket {
     justify-content: end;
 
     margin: var(--bucket-margin);
-    /* padding-top: var(--bubble-margin); */
     height: calc((var(--bucket-height) * var(--bubble-size)) + ((var(--bucket-height) - 1) * var(--bubble-margin)));
     width: var(--bucket-width);
 
@@ -74,8 +73,8 @@ emoji-game-bucket {
     }
 
     &.success {
-        border-color: rgba(130, 255, 46, 0.69);
-        background-color: rgba(11, 171, 3, 0.42);
+        border-color: rgba(201, 154, 13, 0.93);
+        background-color: rgba(255, 248, 227, 0.15);
     }
 }
 
@@ -95,6 +94,7 @@ emoji-game-bubble {
 
     &.selected {
         transform: scale(1.6) rotate(-20deg);
+        box-shadow: 0 0 1.5rem rgba(0, 0, 0, 0.4);
     }
 }
 
