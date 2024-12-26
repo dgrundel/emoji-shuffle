@@ -16,6 +16,7 @@ export class BucketManager extends HTMLElement {
     }
 
     setStyleProps() {
+        this.style.setProperty('--bucket-count', `${this.config.emojiCount + this.config.emptyCount}`);
         this.style.setProperty('--bucket-height', `${this.config.bucketHeight}`);
     }
 
