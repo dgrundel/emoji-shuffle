@@ -59,11 +59,9 @@ emoji-game-bucket {
     border-top-width: 0;
     transition: transform 100ms ease-in-out;
 
-    --mask-depth: .65rem;
-    border-bottom-right-radius: calc(2rem + var(--mask-depth)) calc(1rem + var(--mask-depth));
-    border-bottom-left-radius: calc(2rem + var(--mask-depth)) calc(1rem + var(--mask-depth));
-    mask: radial-gradient(50% var(--mask-depth) at top,transparent 100%,black);
-    padding-top: calc(var(--bubble-margin) + var(--mask-depth));
+    border-bottom-right-radius: 3rem 2rem;
+    border-bottom-left-radius: 3rem 2rem;
+    padding-top: var(--bubble-margin);
     padding-bottom: calc(var(--bubble-margin) / 2);
 
     &:hover {
