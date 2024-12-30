@@ -161,16 +161,28 @@
         });
     };
     const createRange = (opts) => {
+        const text = document.createElement('span');
+        text.classList.add('range-text');
+        text.textContent = opts.label;
+        const display = document.createElement('span');
+        display.classList.add('range-display');
+        display.textContent = `${opts.value}`;
         const input = document.createElement('input');
         input.type = 'range';
         input.min = `${opts.min}`;
         input.max = `${opts.max}`;
         input.step = '1';
         input.value = `${opts.value}`;
-        input.addEventListener('input', () => opts.handler(parseInt(input.value)));
+        input.addEventListener('input', () => {
+            const value = parseInt(input.value);
+            opts.handler(value);
+            display.textContent = `${value}`;
+        });
         const label = document.createElement('label');
-        label.textContent = opts.label;
+        label.classList.add('range-label');
+        label.append(text);
         label.append(input);
+        label.append(display);
         return label;
     };
 

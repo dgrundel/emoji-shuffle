@@ -185,3 +185,17 @@ button {
         text-decoration: line-through;
     }
 }
+
+.range-label {
+    display: grid;
+    grid-template-columns: 1fr auto;
+
+    .range-text {
+        grid-column: 1 / span 2;
+    }
+    .range-display {
+        font-size: .85em;
+        align-content: center;
+        padding-left: 1ex;
+    }
+}
