@@ -356,6 +356,8 @@
             if (success) {
                 const confetti = new Confetti();
                 this.append(confetti);
+                this.undos.splice(0, Infinity);
+                this.game.controls?.triggerUpdate();
             }
         }
         async tryMoveTo(dest) {

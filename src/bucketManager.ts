@@ -76,6 +76,9 @@ export class BucketManager extends HTMLElement {
         if (success) {
             const confetti = new Confetti();
             this.append(confetti);
+
+            this.undos.splice(0, Infinity);
+            this.game.controls?.triggerUpdate();
         }
     }
 
