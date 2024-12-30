@@ -36,7 +36,7 @@ emoji-bucket-manager {
     --bucket-margin: .2rem;
     --bucket-width: calc(var(--bubble-size) + (2 * var(--bubble-margin)));
     --bucket-outer-width: (var(--bucket-width) + (2 * var(--bucket-margin)) + (2 * var(--border-width)));
-    --bucket-row-size: ((var(--bucket-count) / 2) + 1);
+    --bucket-row-size: ((var(--bucket-count) / 2) + .75);
 
     grid-area: buckets;
     align-content: center;
