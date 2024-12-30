@@ -347,7 +347,7 @@
             return getChildren(this, Bucket).some(b => b.hasSelection());
         }
         deselect() {
-            return getChildren(this, Bucket).forEach(b => b.deselect());
+            getChildren(this, Bucket).forEach(b => b.deselect());
         }
         checkSuccess() {
             const success = getChildren(this, Bucket)
@@ -391,6 +391,7 @@
             const fn = this.undos.pop();
             if (fn) {
                 await fn();
+                this.deselect();
                 this.game.triggerUpdate();
             }
         }

@@ -66,7 +66,7 @@ export class BucketManager extends HTMLElement {
     }
 
     deselect() {
-        return getChildren(this, Bucket).forEach(b => b.deselect());
+        getChildren(this, Bucket).forEach(b => b.deselect());
     }
 
     checkSuccess() {
@@ -117,6 +117,7 @@ export class BucketManager extends HTMLElement {
         const fn = this.undos.pop();
         if (fn) {
             await fn();
+            this.deselect();
             this.game.triggerUpdate();
         }
     }
