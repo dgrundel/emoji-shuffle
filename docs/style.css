@@ -71,8 +71,8 @@ emoji-game-bucket {
     }
 
     &.success {
-        border-color: rgba(201, 154, 13, 0.93);
-        background-color: rgba(255, 248, 227, 0.15);
+        border-color: rgba(120, 201, 13, 0.93);
+        background-color: rgba(131, 194, 36, 0.174);
     }
 }
 
