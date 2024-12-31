@@ -31,17 +31,20 @@ emoji-game {
 }
 
 emoji-bucket-manager {
-    --bubble-size: 2.8rem;
     --bubble-gap: .3rem;
     --bucket-gap: .2rem;
-    --bucket-width: calc(var(--bubble-size) + (2 * var(--bubble-gap)));
-    --bucket-outer-width: (var(--bucket-width) + (2 * var(--bucket-gap)) + (2 * var(--border-width)));
-    --bucket-row-size: ((var(--bucket-count) / 2) + .75);
+
+    --max-buckets-per-row: round(up, var(--bucket-count) / 2, 1);
+    --bucket-container-width: (100vw - 4rem);
+    --bucket-outer-width: calc(var(--bucket-container-width) / var(--max-buckets-per-row));
+    --bucket-width: calc(var(--bucket-outer-width) - (2 * var(--border-width)) - (2 * var(--bucket-gap)));
+    --bubble-size: calc(var(--bucket-width) - (2 * var(--bubble-gap)));
+    
+    width: var(--bucket-container-width);
 
     grid-area: buckets;
     align-content: center;
     text-align: center;
-    max-width: calc(var(--bucket-outer-width) * var(--bucket-row-size));
 }
 
 emoji-game-bucket {
@@ -52,8 +55,8 @@ emoji-game-bucket {
     align-items: center;
 
     margin: var(--bucket-gap);
-    height: calc((var(--bucket-height) * var(--bubble-size)) + ((var(--bucket-height) - 1) * var(--bubble-gap)));
     width: var(--bucket-width);
+    height: calc((var(--bucket-height) * var(--bubble-size)) + ((var(--bucket-height) - 1) * var(--bubble-gap)));
 
     background-color: rgba(255, 255, 255, 0.4);
     border: var(--border-width) solid rgba(63, 63, 63, 0.46);
@@ -83,6 +86,7 @@ emoji-game-bubble {
     font-size: calc(var(--bubble-size) * 1.05);
     width: var(--bubble-size);
     height: var(--bubble-size);
+
     overflow: hidden;
     background-color: #303030;
     border-radius: 50%;
