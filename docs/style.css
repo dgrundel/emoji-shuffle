@@ -32,14 +32,15 @@ emoji-game {
 }
 
 emoji-bucket-manager {
-    --bubble-gap: .3rem;
-    --bucket-gap: .2rem;
+    --bubble-gap: .18rem;
+    --bucket-gap: .16rem;
 
     --max-buckets-per-row: round(up, var(--bucket-count) / 2, 1);
 
-    --border-width: calc(1.5rem / var(--max-buckets-per-row));
+    --outer-margin: calc(8rem / var(--max-buckets-per-row));
+    --border-width: calc(1.2rem / var(--max-buckets-per-row));
 
-    --bucket-container-width: calc(100vw - 4rem);
+    --bucket-container-width: calc(100vw - (2 * var(--outer-margin)));
     --bucket-outer-width: calc(var(--bucket-container-width) / var(--max-buckets-per-row));
     --bucket-width: calc(var(--bucket-outer-width) - (2 * var(--border-width)) - (2 * var(--bucket-gap)));
     --bubble-size: calc(var(--bucket-width) - (2 * var(--bubble-gap)));
