@@ -216,15 +216,17 @@
         put(b) {
             this.prepend(b);
         }
-        async onClick(e) {
+        onClick(e) {
             if (this.manager.hasSelection()) {
-                await this.manager.tryMoveTo(this);
-                this.manager.deselect();
+                this.manager.tryMoveTo(this).then(() => {
+                    this.manager.deselect();
+                    this.manager.game.triggerUpdate();
+                });
             }
             else {
                 this.select();
+                this.manager.game.triggerUpdate();
             }
-            this.manager.game.triggerUpdate();
         }
         select() {
             const bubbles = getChildren(this, Bubble);
@@ -358,6 +360,7 @@
                 this.append(confetti);
                 this.undos.splice(0, Infinity);
                 this.game.controls?.triggerUpdate();
+                this.deselect();
             }
         }
         async tryMoveTo(dest) {

@@ -79,6 +79,8 @@ export class BucketManager extends HTMLElement {
 
             this.undos.splice(0, Infinity);
             this.game.controls?.triggerUpdate();
+
+            this.deselect();
         }
     }
 

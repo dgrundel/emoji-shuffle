@@ -19,14 +19,16 @@ export class Bucket extends HTMLElement {
         this.prepend(b);
     }
 
-    async onClick(e: MouseEvent) {
+    onClick(e: MouseEvent) {
         if (this.manager.hasSelection()) {
-            await this.manager.tryMoveTo(this);
-            this.manager.deselect();
+            this.manager.tryMoveTo(this).then(() => {
+                this.manager.deselect();
+                this.manager.game.triggerUpdate();
+            });
         } else {
             this.select();
+            this.manager.game.triggerUpdate();
         }
-        this.manager.game.triggerUpdate();
     }
 
     select() {
