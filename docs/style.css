@@ -35,7 +35,7 @@ emoji-bucket-manager {
     --bucket-gap: .2rem;
 
     --max-buckets-per-row: round(up, var(--bucket-count) / 2, 1);
-    --bucket-container-width: (100vw - 4rem);
+    --bucket-container-width: calc(100vw - 4rem);
     --bucket-outer-width: calc(var(--bucket-container-width) / var(--max-buckets-per-row));
     --bucket-width: calc(var(--bucket-outer-width) - (2 * var(--border-width)) - (2 * var(--bucket-gap)));
     --bubble-size: calc(var(--bucket-width) - (2 * var(--bubble-gap)));
@@ -45,6 +45,12 @@ emoji-bucket-manager {
     grid-area: buckets;
     align-content: center;
     text-align: center;
+}
+
+@media screen and (orientation:landscape) {
+    emoji-bucket-manager {
+        --bucket-container-width: calc(48vw - 4rem);
+    }
 }
 
 emoji-game-bucket {
