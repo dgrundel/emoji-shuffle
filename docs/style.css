@@ -32,10 +32,10 @@ emoji-game {
 
 emoji-bucket-manager {
     --bubble-size: 2.8rem;
-    --bubble-margin: .3rem;
-    --bucket-margin: .2rem;
-    --bucket-width: calc(var(--bubble-size) + (2 * var(--bubble-margin)));
-    --bucket-outer-width: (var(--bucket-width) + (2 * var(--bucket-margin)) + (2 * var(--border-width)));
+    --bubble-gap: .3rem;
+    --bucket-gap: .2rem;
+    --bucket-width: calc(var(--bubble-size) + (2 * var(--bubble-gap)));
+    --bucket-outer-width: (var(--bucket-width) + (2 * var(--bucket-gap)) + (2 * var(--border-width)));
     --bucket-row-size: ((var(--bucket-count) / 2) + .75);
 
     grid-area: buckets;
@@ -49,9 +49,10 @@ emoji-game-bucket {
     flex-direction: column;
     vertical-align: bottom;
     justify-content: end;
+    align-items: center;
 
-    margin: var(--bucket-margin);
-    height: calc((var(--bucket-height) * var(--bubble-size)) + ((var(--bucket-height) - 1) * var(--bubble-margin)));
+    margin: var(--bucket-gap);
+    height: calc((var(--bucket-height) * var(--bubble-size)) + ((var(--bucket-height) - 1) * var(--bubble-gap)));
     width: var(--bucket-width);
 
     background-color: rgba(255, 255, 255, 0.4);
@@ -59,10 +60,10 @@ emoji-game-bucket {
     border-top-width: 0;
     transition: transform 100ms ease-in-out;
 
-    border-bottom-right-radius: 3rem 2rem;
-    border-bottom-left-radius: 3rem 2rem;
-    padding-top: var(--bubble-margin);
-    padding-bottom: calc(var(--bubble-margin) / 2);
+    border-bottom-right-radius: 50% 12%;
+    border-bottom-left-radius: 50% 12%;
+    padding-top: var(--bubble-gap);
+    padding-bottom: calc(var(--bubble-gap) / 2);
 
     &:hover {
         transform: scale(1.1);
@@ -79,7 +80,7 @@ emoji-game-bucket {
 emoji-game-bubble {
     --transition-duration: 100ms;
 
-    font-size: 2.9rem;
+    font-size: calc(var(--bubble-size) * 1.05);
     width: var(--bubble-size);
     height: var(--bubble-size);
     overflow: hidden;
@@ -87,7 +88,7 @@ emoji-game-bubble {
     border-radius: 50%;
     text-align: center;
     align-content: center;
-    margin: 0 var(--bubble-margin) var(--bubble-margin);
+    margin: 0 var(--bubble-gap) var(--bubble-gap);
     transition: transform var(--transition-duration) ease-in-out;
 
     &.selected {
