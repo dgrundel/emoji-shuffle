@@ -135,6 +135,10 @@ export class BucketManager extends HTMLElement {
     }
 
     async reset() {
+        if (this.undos.length === 0) {
+            return
+        }
+
         const nodes = this.undos.reduce((nodeSet, action) => {
             action.nodes.forEach(n => nodeSet.add(n));
             return nodeSet;

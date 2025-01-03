@@ -200,8 +200,8 @@ button {
     position: relative;
     color: #fff;
     background-color: #b95de2;
-    padding: 1rem;
-    font-size: 1.3rem;
+    padding: 1.2rem .75rem;
+    font-size: 1.15rem;
     border-radius: 1.3rem;
     border: var(--border-width) solid #8844a7;
     border-top-width: 0;

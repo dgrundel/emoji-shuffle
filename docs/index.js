@@ -298,6 +298,7 @@
     class Controls extends HTMLElement {
         game;
         undoBtn;
+        newBtn;
         resetBtn;
         constructor(game) {
             super();
@@ -306,6 +307,9 @@
         triggerUpdate() {
             if (this.undoBtn) {
                 this.undoBtn.disabled = this.game.manager?.undos.length === 0;
+            }
+            if (this.resetBtn) {
+                this.resetBtn.disabled = this.game.manager?.undos.length === 0;
             }
         }
         connectedCallback() {
@@ -323,6 +327,13 @@
                 this.game.resetGame();
             });
             this.append(this.resetBtn);
+            this.newBtn = document.createElement('button');
+            this.newBtn.textContent = '⏩ New';
+            this.newBtn.addEventListener('click', () => {
+                this.game.soundController.altClick();
+                this.game.newGame();
+            });
+            this.append(this.newBtn);
             const configBtn = document.createElement('button');
             configBtn.textContent = '⚙️';
             configBtn.addEventListener('click', () => {
@@ -443,6 +454,9 @@
             }
         }
         async reset() {
+            if (this.undos.length === 0) {
+                return;
+            }
             const nodes = this.undos.reduce((nodeSet, action) => {
                 action.nodes.forEach(n => nodeSet.add(n));
                 return nodeSet;

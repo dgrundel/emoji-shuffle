@@ -3,6 +3,7 @@ import { Game } from "./game";
 export class Controls extends HTMLElement {
     game: Game;
     undoBtn?: HTMLButtonElement;
+    newBtn?: HTMLButtonElement;
     resetBtn?: HTMLButtonElement;
 
     constructor(game: Game) {
@@ -13,6 +14,9 @@ export class Controls extends HTMLElement {
     triggerUpdate() {
         if (this.undoBtn) {
             this.undoBtn.disabled = this.game.manager?.undos.length === 0;
+        }
+        if (this.resetBtn) {
+            this.resetBtn.disabled = this.game.manager?.undos.length === 0;
         }
     }
     
@@ -29,9 +33,17 @@ export class Controls extends HTMLElement {
         this.resetBtn.textContent = '🔄 Reset';
         this.resetBtn.addEventListener('click', () => {
             this.game.soundController.altClick();
-            this.game.resetGame()
+            this.game.resetGame();
         });
         this.append(this.resetBtn);
+
+        this.newBtn = document.createElement('button');
+        this.newBtn.textContent = '⏩ New';
+        this.newBtn.addEventListener('click', () => {
+            this.game.soundController.altClick();
+            this.game.newGame();
+        });
+        this.append(this.newBtn);
 
         const configBtn = document.createElement('button');
         configBtn.textContent = '⚙️';
