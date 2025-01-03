@@ -13,7 +13,7 @@
     background-color: #2a54fa;
 }
 [data-emoji="🍪"] {
-    background-color: #65390a;
+    background-image: radial-gradient(circle calc(var(--bubble-size)*1.5) at 30% 30%, #be8631, #a26822 14.29%, #70471b 45%);
 }
 [data-emoji="💖"] {
     background-color: #ed94e7;
@@ -28,7 +28,6 @@
     background-color: #817f7f;
 }
 [data-emoji="✨"] {
-    /* background-color: #164169; */
     background-image: radial-gradient(circle calc(var(--bubble-size)*1.5) at 30% 30%, #2559de 0%, #2559de 8%, #04041d 45%);
 }
 [data-emoji="🎉"] {
