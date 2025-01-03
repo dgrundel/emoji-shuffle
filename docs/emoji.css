@@ -2,10 +2,12 @@
     background-color: #7ae086;
 }
 [data-emoji="🙌"] {
-    background-color: #6a40c7;
+    background-color: #BDFF6E;
+    background-image: linear-gradient(180deg, #FFF 0%, #95ACFF 35%, #7FBC12 100%);
 }
 [data-emoji="💯"] {
-    background-color: #374246;
+    background-color: #613EC0;
+    background-image: linear-gradient(43deg, #454545 0%, #5924CD 46%, #F4D6FF 100%);
 }
 [data-emoji="😱"] {
     background-color: #2a54fa;
