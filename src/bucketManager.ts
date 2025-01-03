@@ -97,7 +97,7 @@ export class BucketManager extends HTMLElement {
             return;
         }
         const existing = getChildren(dest, Bubble);
-        if (existing.length !== 0 && existing[0].textContent !== selected[0].textContent) {
+        if (existing.length !== 0 && existing[0].emoji !== selected[0].emoji) {
             return;
         }
 

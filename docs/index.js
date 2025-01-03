@@ -202,9 +202,11 @@
 
     class Bubble extends HTMLElement {
         static selectedClass = 'selected';
-        constructor(label) {
+        emoji;
+        constructor(emoji) {
             super();
-            this.textContent = label;
+            this.emoji = emoji;
+            this.dataset.emoji = emoji;
         }
         select() {
             this.classList.add(Bubble.selectedClass);
@@ -250,7 +252,7 @@
             const first = bubbles.shift();
             first?.select();
             for (let i = 0; i < bubbles.length; i++) {
-                if (bubbles[i].textContent !== first?.textContent) {
+                if (bubbles[i].emoji !== first?.emoji) {
                     break;
                 }
                 bubbles[i].select();
@@ -272,7 +274,7 @@
                 return false;
             }
             const first = bubbles.shift();
-            const success = bubbles.every(b => b.textContent === first?.textContent);
+            const success = bubbles.every(b => b.emoji === first?.emoji);
             this.classList.toggle(Bucket.successClass, success);
             return success;
         }
@@ -390,7 +392,7 @@
                 return;
             }
             const existing = getChildren(dest, Bubble);
-            if (existing.length !== 0 && existing[0].textContent !== selected[0].textContent) {
+            if (existing.length !== 0 && existing[0].emoji !== selected[0].emoji) {
                 return;
             }
             const available = this.config.bucketHeight - existing.length;

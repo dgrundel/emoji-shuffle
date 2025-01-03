@@ -39,7 +39,7 @@ export class Bucket extends HTMLElement {
         const first = bubbles.shift();
         first?.select();
         for (let i = 0; i < bubbles.length; i++) {
-            if (bubbles[i].textContent !== first?.textContent) {
+            if (bubbles[i].emoji !== first?.emoji) {
                 break;
             }
             bubbles[i].select();
@@ -65,7 +65,7 @@ export class Bucket extends HTMLElement {
             return false;
         }
         const first = bubbles.shift();
-        const success = bubbles.every(b => b.textContent === first?.textContent);
+        const success = bubbles.every(b => b.emoji === first?.emoji);
         this.classList.toggle(Bucket.successClass, success);
         return success;
     }

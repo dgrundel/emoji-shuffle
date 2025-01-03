@@ -1,9 +1,11 @@
 export class Bubble extends HTMLElement {    
     private static selectedClass = 'selected';
+    emoji: string;
 
-    constructor(label: string) {
+    constructor(emoji: string) {
         super();
-        this.textContent = label;
+        this.emoji = emoji;
+        this.dataset.emoji = emoji;
     }
 
     select() {
