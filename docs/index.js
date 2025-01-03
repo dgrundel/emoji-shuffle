@@ -472,7 +472,7 @@
             const action = this.undos.pop();
             if (action) {
                 await animate(action);
-                this.game.soundController.pop();
+                // this.game.soundController.pop();
                 this.deselect();
                 this.game.triggerUpdate();
             }
@@ -493,7 +493,7 @@
                 nodes: [...nodes],
                 domChange,
             });
-            this.game.soundController.pop();
+            // this.game.soundController.pop();
             this.undos.splice(0);
         }
         triggerUpdate() {
@@ -706,9 +706,9 @@
             const confetti = new Confetti();
             this.append(confetti);
             this.soundController.fanfare();
+            this.manager?.triggerGameWin();
             this.controls?.triggerGameWin();
             this.statusBar?.triggerGameWin();
-            this.manager?.triggerGameWin();
         }
         triggerUpdate() {
             this.statusBar?.triggerUpdate();

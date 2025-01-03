@@ -126,7 +126,7 @@ export class BucketManager extends HTMLElement {
         const action = this.undos.pop();
         if (action) {
             await animate(action);
-            this.game.soundController.pop();
+            // this.game.soundController.pop();
             this.deselect();
             this.game.triggerUpdate();
         }
@@ -152,7 +152,7 @@ export class BucketManager extends HTMLElement {
             domChange,
         });
 
-        this.game.soundController.pop();
+        // this.game.soundController.pop();
         this.undos.splice(0);
     }
 

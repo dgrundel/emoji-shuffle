@@ -48,9 +48,9 @@ export class Game extends HTMLElement {
         this.append(confetti);
         this.soundController.fanfare();
 
+        this.manager?.triggerGameWin();
         this.controls?.triggerGameWin();
         this.statusBar?.triggerGameWin();
-        this.manager?.triggerGameWin();
     }
 
     triggerUpdate() {
