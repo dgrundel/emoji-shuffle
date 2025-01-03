@@ -109,12 +109,18 @@ export class BucketManager extends HTMLElement {
         
         const movables = selected.slice(0, moves);
         
-        this.undos.push(async () => animate(movables, async () => {
-            movables.forEach(m => src.prepend(m));
+        this.undos.push(async () => animate({
+            nodes: movables,
+            domChange: async () => {
+                movables.forEach(m => src.prepend(m));
+            }
         }).then(() => this.game.soundController.pop()));
         
-        return animate(movables, async () => {
-            movables.forEach(m => dest.prepend(m));
+        return animate({
+            nodes: movables, 
+            domChange: async () => {
+                movables.forEach(m => dest.prepend(m));
+            }
         }).then(() => this.game.soundController.pop());
     }
 

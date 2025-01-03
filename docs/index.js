@@ -140,7 +140,8 @@
             node.removeChild(node.lastChild);
         }
     };
-    const animate = async (nodes, fn) => {
+    const animate = async (action) => {
+        const { nodes, domChange: fn } = action;
         let maxDuration = 0;
         nodes.forEach(n => {
             const style = getComputedStyle(n);
@@ -419,11 +420,17 @@
                 return shake([dest]);
             }
             const movables = selected.slice(0, moves);
-            this.undos.push(async () => animate(movables, async () => {
-                movables.forEach(m => src.prepend(m));
+            this.undos.push(async () => animate({
+                nodes: movables,
+                domChange: async () => {
+                    movables.forEach(m => src.prepend(m));
+                }
             }).then(() => this.game.soundController.pop()));
-            return animate(movables, async () => {
-                movables.forEach(m => dest.prepend(m));
+            return animate({
+                nodes: movables,
+                domChange: async () => {
+                    movables.forEach(m => dest.prepend(m));
+                }
             }).then(() => this.game.soundController.pop());
         }
         async undo() {

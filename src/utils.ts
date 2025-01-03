@@ -21,7 +21,14 @@ export const clearChildren = (node: Node) => {
     }
 };
 
-export const animate = async (nodes: HTMLElement[], fn: () => Promise<void>): Promise<void> => {
+export interface AnimatedAction {
+    nodes: HTMLElement[];
+    domChange: () => Promise<void>;
+}
+
+export const animate = async (action: AnimatedAction): Promise<void> => {
+    const { nodes, domChange: fn } = action;
+
     let maxDuration = 0;
     nodes.forEach(n => {
         const style = getComputedStyle(n);
