@@ -631,12 +631,12 @@
             this.bestStreak = getNumberFromLocalStorage(bestStreakKey, 0);
         }
         connectedCallback() {
-            this.triggerUpdate();
-            this.currentStreakDisplay = document.createElement('span');
+            this.currentStreakDisplay = document.createElement('div');
             this.currentStreakDisplay.classList.add('status-item');
-            this.append(this.currentStreakDisplay);
-            this.bestStreakDisplay = document.createElement('span');
+            this.bestStreakDisplay = document.createElement('div');
             this.bestStreakDisplay.classList.add('status-item');
+            this.triggerUpdate();
+            this.append(this.currentStreakDisplay);
             this.append(this.bestStreakDisplay);
         }
         incrementStreak() {

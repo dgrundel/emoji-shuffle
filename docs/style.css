@@ -78,7 +78,7 @@ emoji-game-bucket {
     background-color: rgba(255, 255, 255, 0.2);
     background-image: linear-gradient(62deg, RGBA(0, 128, 255, 0.35) 0%, RGBA(224, 195, 252, 0.35) 70%);
     border: var(--border-width) solid rgba(58, 58, 58, 0.46);
-    border-top-width: 0;
+    border-top: 1px solid rgba(0,0,0,0.05);
     transition: transform 100ms ease-in-out;
 
     border-bottom-right-radius: 50% 12%;
@@ -256,33 +256,30 @@ button {
 }
 
 .shake {
-    /* animation: name duration timing-function delay iteration-count direction fill-mode; */
     animation-name: x-shake;
     animation-duration: 200ms;
     animation-iteration-count: 3;
 }
 
 emoji-game-status-bar {
-    --bleed-size: 1rem;
+    width: 100vw;
+    text-align: center;
 
-    display: flex;
-    flex-direction: row;
-    width: 100%;
-    justify-content: space-evenly;
-
-    font-size: 1.5rem;
+    font-size: 1.15rem;
     text-transform: uppercase;
     color: rgba(255, 255, 255, 0.95);
     text-shadow: 0 0 .1rem #000;
 
-    position: relative;
-    top: calc(-1 * var(--bleed-size));
+    padding-top: .3rem;
 
     .status-item {
-        transform: rotate(-1.5deg);
-        padding: calc(var(--bleed-size) + .5rem) .3rem .3rem;
+        display: inline-block;
+        margin: 0 .2rem;
+
+        transform: rotate(-2.5deg);
+        padding: .3rem;
         text-align: center;
-        background-color: #994bbc;
+        background-color: rgba(0, 0, 0, 0.35);
         border-radius: .3rem;
     }
 }
