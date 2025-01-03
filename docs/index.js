@@ -421,6 +421,10 @@
                 console.error('Tried to move but there was no selection.');
                 return;
             }
+            // no op
+            if (src === dest) {
+                return;
+            }
             const existing = getChildren(dest, Bubble);
             if (existing.length !== 0 && existing[0].emoji !== selected[0].emoji) {
                 return shake([src]);
@@ -549,13 +553,25 @@
         }
     }
 
+    var Sound;
+    (function (Sound) {
+        Sound["Pop1"] = "pop1.wav";
+        Sound["Pop2"] = "pop2.wav";
+        Sound["Pop3"] = "pop3.wav";
+        Sound["Pop4"] = "pop4.wav";
+        Sound["Pop5"] = "pop5.wav";
+        Sound["Pop6"] = "pop6.wav";
+        Sound["Tada"] = "tada.wav";
+        Sound["Click"] = "click.wav";
+        Sound["AltClick"] = "alt-click.wav";
+    })(Sound || (Sound = {}));
     const pops = [
-        'pop1.wav',
-        'pop2.wav',
-        'pop3.wav',
-        'pop4.wav',
-        'pop5.wav',
-        'pop6.wav',
+        Sound.Pop1,
+        Sound.Pop2,
+        Sound.Pop3,
+        Sound.Pop4,
+        Sound.Pop5,
+        Sound.Pop6,
     ];
     class SoundController {
         cache = {};
@@ -566,11 +582,11 @@
             }
             return this.cache[src];
         }
-        play(src, volume = 1.0) {
+        play(sound, volume = 1.0) {
             if (!this.enabled) {
                 return;
             }
-            const a = this.getAudio(src);
+            const a = this.getAudio(sound);
             a.volume = volume;
             a.play();
         }
@@ -579,13 +595,13 @@
             this.play(pops[i], 0.45);
         }
         fanfare() {
-            this.play('tada.wav', 0.6);
+            this.play(Sound.Tada, 0.6);
         }
         click() {
-            this.play('click.wav', 0.8);
+            this.play(Sound.Click, 0.8);
         }
         altClick() {
-            this.play('alt-click.wav');
+            this.play(Sound.AltClick);
         }
     }
 

@@ -96,6 +96,12 @@ export class BucketManager extends HTMLElement {
             console.error('Tried to move but there was no selection.');
             return;
         }
+
+        // no op
+        if (src === dest) {
+            return;
+        }
+
         const existing = getChildren(dest, Bubble);
         if (existing.length !== 0 && existing[0].emoji !== selected[0].emoji) {
             return shake([src]);

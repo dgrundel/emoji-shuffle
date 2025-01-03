@@ -1,17 +1,29 @@
+enum Sound {
+    Pop1 = 'pop1.wav',
+    Pop2 = 'pop2.wav',
+    Pop3 = 'pop3.wav',
+    Pop4 = 'pop4.wav',
+    Pop5 = 'pop5.wav',
+    Pop6 = 'pop6.wav',
+    Tada = 'tada.wav',
+    Click = 'click.wav',
+    AltClick = 'alt-click.wav',
+}
+
 const pops = [
-    'pop1.wav',
-    'pop2.wav',
-    'pop3.wav',
-    'pop4.wav',
-    'pop5.wav',
-    'pop6.wav',
+    Sound.Pop1,
+    Sound.Pop2,
+    Sound.Pop3,
+    Sound.Pop4,
+    Sound.Pop5,
+    Sound.Pop6,
 ];
 
 export class SoundController {
-    private cache: Record<string, HTMLAudioElement> = {};
+    private cache: Partial<Record<Sound, HTMLAudioElement>> = {};
     enabled: boolean = true;
 
-    private getAudio(src: string): HTMLAudioElement {
+    private getAudio(src: Sound): HTMLAudioElement {
         if (!this.cache[src]) {
             this.cache[src] = new Audio(src);
         }
@@ -19,11 +31,11 @@ export class SoundController {
         return this.cache[src];
     }
 
-    private play(src: string, volume: number = 1.0) {
+    private play(sound: Sound, volume: number = 1.0) {
         if (!this.enabled) {
             return;
         }
-        const a = this.getAudio(src);
+        const a = this.getAudio(sound);
         a.volume = volume;
         a.play();
     }
@@ -34,14 +46,14 @@ export class SoundController {
     }
 
     fanfare() {
-        this.play('tada.wav', 0.6);
+        this.play(Sound.Tada, 0.6);
     }
 
     click() {
-        this.play('click.wav', 0.8);
+        this.play(Sound.Click, 0.8);
     }
 
     altClick() {
-        this.play('alt-click.wav');
+        this.play(Sound.AltClick);
     }
 }
