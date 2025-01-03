@@ -2,6 +2,7 @@ import { Controls } from './controls';
 import { BucketManager } from './bucketManager';
 import { ConfigPanel } from './config';
 import { SoundController } from './sound';
+import { StatusBar } from './status';
 
 export interface GameConfig {
     emojiCandidates: string[];
@@ -13,6 +14,7 @@ export interface GameConfig {
 export class Game extends HTMLElement {
     config: GameConfig
     soundController: SoundController;
+    statusBar?: StatusBar;
     controls?: Controls;
     manager?: BucketManager;
     configPanel?: ConfigPanel;
@@ -24,6 +26,8 @@ export class Game extends HTMLElement {
     }
 
     connectedCallback() {
+        this.statusBar = new StatusBar(this);
+        this.append(this.statusBar);
         this.controls = new Controls(this);
         this.append(this.controls);
         this.manager = new BucketManager(this);
@@ -35,6 +39,7 @@ export class Game extends HTMLElement {
     }
 
     triggerUpdate() {
+        this.statusBar?.triggerUpdate();
         this.controls?.triggerUpdate();
         this.manager?.triggerUpdate();
     }

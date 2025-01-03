@@ -81,6 +81,9 @@ export class BucketManager extends HTMLElement {
             this.undos.splice(0, Infinity);
             this.game.controls?.triggerUpdate();
 
+            this.game.statusBar?.incrementStreak();
+            this.game.statusBar?.triggerUpdate();
+
             this.deselect();
         }
     }

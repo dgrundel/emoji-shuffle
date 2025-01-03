@@ -140,6 +140,17 @@
             node.removeChild(node.lastChild);
         }
     };
+    function getNumberFromLocalStorage(key, fallback) {
+        const str = localStorage.getItem(key);
+        if (!str) {
+            return fallback;
+        }
+        const parsed = parseInt(str);
+        if (isNaN(parsed)) {
+            return fallback;
+        }
+        return parsed;
+    }
     const animate = async (action) => {
         const { nodes, domChange: fn } = action;
         let maxDuration = 0;
@@ -407,6 +418,8 @@
                 this.game.soundController.fanfare();
                 this.undos.splice(0, Infinity);
                 this.game.controls?.triggerUpdate();
+                this.game.statusBar?.incrementStreak();
+                this.game.statusBar?.triggerUpdate();
                 this.deselect();
             }
         }
@@ -605,9 +618,35 @@
         }
     }
 
+    const bestStreakKey = 'best-streak';
+    class StatusBar extends HTMLElement {
+        game;
+        bestStreak;
+        currentStreak = 0;
+        constructor(game) {
+            super();
+            this.game = game;
+            this.bestStreak = getNumberFromLocalStorage(bestStreakKey, 0);
+        }
+        connectedCallback() {
+            this.triggerUpdate();
+        }
+        incrementStreak() {
+            this.currentStreak++;
+            if (this.currentStreak > this.bestStreak) {
+                this.bestStreak = this.currentStreak;
+                localStorage.setItem(bestStreakKey, this.bestStreak.toFixed(0));
+            }
+        }
+        triggerUpdate() {
+            this.textContent = `Current streak: ${this.currentStreak} (Best streak: ${this.bestStreak})`;
+        }
+    }
+
     class Game extends HTMLElement {
         config;
         soundController;
+        statusBar;
         controls;
         manager;
         configPanel;
@@ -617,6 +656,8 @@
             this.soundController = new SoundController();
         }
         connectedCallback() {
+            this.statusBar = new StatusBar(this);
+            this.append(this.statusBar);
             this.controls = new Controls(this);
             this.append(this.controls);
             this.manager = new BucketManager(this);
@@ -627,6 +668,7 @@
             this.triggerUpdate();
         }
         triggerUpdate() {
+            this.statusBar?.triggerUpdate();
             this.controls?.triggerUpdate();
             this.manager?.triggerUpdate();
         }
@@ -642,6 +684,7 @@
 
     customElements.define('emoji-game', Game);
     customElements.define('emoji-game-config', ConfigPanel);
+    customElements.define('emoji-game-status-bar', StatusBar);
     customElements.define('emoji-bucket-manager', BucketManager);
     customElements.define('emoji-game-controls', Controls);
     customElements.define('emoji-game-bucket', Bucket);
