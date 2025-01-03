@@ -28,7 +28,8 @@
     background-color: #817f7f;
 }
 [data-emoji="✨"] {
-    background-color: #164169;
+    /* background-color: #164169; */
+    background-image: radial-gradient(circle calc(var(--bubble-size)*1.5) at 30% 30%, #2559de 0%, #2559de 8%, #04041d 45%);
 }
 [data-emoji="🎉"] {
     background-color: #f6b424;
@@ -37,11 +38,11 @@
     background-color: #edcd4e;
 }
 [data-emoji="🚀"] {
-    background-color: #87e3ff;
+    background-image: linear-gradient(180deg, #084062 10%, #59dcfa 100%);
 }
 [data-emoji="😍"] {
     background-color: #952a2a;
 }
 [data-emoji="💎"] {
-    background-color: #cad4f6;
+    background-image: linear-gradient(110deg, #00e7ff 2%, #ff9a8b 40%, #ffc3a0 58%, #ffd700 98%);
 }

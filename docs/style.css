@@ -74,8 +74,9 @@ emoji-game-bucket {
     width: var(--bucket-width);
     height: calc((var(--bucket-height) * var(--bubble-size)) + ((var(--bucket-height) - 1) * var(--bubble-gap)));
 
-    background-color: rgba(255, 255, 255, 0.4);
-    border: var(--border-width) solid rgba(63, 63, 63, 0.46);
+    background-color: rgba(255, 255, 255, 0.2);
+    background-image: linear-gradient(62deg, RGBA(0, 128, 255, 0.35) 0%, RGBA(224, 195, 252, 0.35) 70%);
+    border: var(--border-width) solid rgba(58, 58, 58, 0.46);
     border-top-width: 0;
     transition: transform 100ms ease-in-out;
 
