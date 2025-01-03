@@ -343,18 +343,18 @@
             this.game = game;
             this.config = game.config;
         }
-        setStyleProps() {
-            this.style.setProperty('--bucket-count', `${this.config.emojiCount + this.config.emptyCount}`);
-            this.style.setProperty('--bucket-height', `${this.config.bucketHeight}`);
-        }
         connectedCallback() {
-            this.resetBuckets();
+            this.regenerate();
         }
-        resetBuckets() {
+        async regenerate() {
             clearChildren(this);
             this.setStyleProps();
             this.undos = [];
             this.generateBuckets();
+        }
+        setStyleProps() {
+            this.style.setProperty('--bucket-count', `${this.config.emojiCount + this.config.emptyCount}`);
+            this.style.setProperty('--bucket-height', `${this.config.bucketHeight}`);
         }
         generateBuckets() {
             const emojiCandidates = this.config.emojiCandidates.slice();
@@ -420,12 +420,12 @@
                 return shake([dest]);
             }
             const movables = selected.slice(0, moves);
-            this.undos.push(async () => animate({
+            this.undos.push({
                 nodes: movables,
                 domChange: async () => {
                     movables.forEach(m => src.prepend(m));
                 }
-            }).then(() => this.game.soundController.pop()));
+            });
             return animate({
                 nodes: movables,
                 domChange: async () => {
@@ -434,12 +434,29 @@
             }).then(() => this.game.soundController.pop());
         }
         async undo() {
-            const fn = this.undos.pop();
-            if (fn) {
-                await fn();
+            const action = this.undos.pop();
+            if (action) {
+                await animate(action);
+                this.game.soundController.pop();
                 this.deselect();
                 this.game.triggerUpdate();
             }
+        }
+        async reset() {
+            const nodes = this.undos.reduce((nodeSet, action) => {
+                action.nodes.forEach(n => nodeSet.add(n));
+                return nodeSet;
+            }, new Set());
+            const domChange = async () => {
+                const promises = this.undos.map(action => action.domChange());
+                return Promise.all(promises);
+            };
+            await animate({
+                nodes: [...nodes],
+                domChange,
+            });
+            this.game.soundController.pop();
+            this.undos.splice(0);
         }
         triggerUpdate() {
             getChildren(this, Bucket).forEach(b => b.triggerUpdate());
@@ -583,8 +600,12 @@
             this.controls?.triggerUpdate();
             this.manager?.triggerUpdate();
         }
-        resetGame() {
-            this.manager?.resetBuckets();
+        async resetGame() {
+            await this.manager?.reset();
+            this.triggerUpdate();
+        }
+        async newGame() {
+            await this.manager?.regenerate();
             this.triggerUpdate();
         }
     }

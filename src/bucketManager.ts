@@ -2,12 +2,12 @@ import { Bubble } from "./bubble";
 import { Bucket } from "./bucket";
 import { Confetti } from "./confetti";
 import { Game, GameConfig } from "./game";
-import { animate, clearChildren, doTimes, getChildren, shake, takeRandom } from "./utils";
+import { animate, AnimatedAction, clearChildren, doTimes, getChildren, shake, takeRandom } from "./utils";
 
 export class BucketManager extends HTMLElement {
     game: Game;
     config: GameConfig;
-    undos: (() => Promise<void>)[] = [];
+    undos: AnimatedAction[] = [];
 
     constructor(game: Game) {
         super()
@@ -15,23 +15,23 @@ export class BucketManager extends HTMLElement {
         this.config = game.config;
     }
 
-    setStyleProps() {
-        this.style.setProperty('--bucket-count', `${this.config.emojiCount + this.config.emptyCount}`);
-        this.style.setProperty('--bucket-height', `${this.config.bucketHeight}`);
-    }
-
     connectedCallback() {
-        this.resetBuckets();
+        this.regenerate();
     }
 
-    resetBuckets() {
+    async regenerate() {
         clearChildren(this);
         this.setStyleProps();
         this.undos = [];
         this.generateBuckets();
     }
 
-    generateBuckets() {
+    private setStyleProps() {
+        this.style.setProperty('--bucket-count', `${this.config.emojiCount + this.config.emptyCount}`);
+        this.style.setProperty('--bucket-height', `${this.config.bucketHeight}`);
+    }
+
+    private generateBuckets() {
         const emojiCandidates = this.config.emojiCandidates.slice();
         const bubbles: Bubble[] = [];
 
@@ -109,12 +109,12 @@ export class BucketManager extends HTMLElement {
         
         const movables = selected.slice(0, moves);
         
-        this.undos.push(async () => animate({
+        this.undos.push({
             nodes: movables,
             domChange: async () => {
                 movables.forEach(m => src.prepend(m));
             }
-        }).then(() => this.game.soundController.pop()));
+        });
         
         return animate({
             nodes: movables, 
@@ -125,12 +125,33 @@ export class BucketManager extends HTMLElement {
     }
 
     async undo() {
-        const fn = this.undos.pop();
-        if (fn) {
-            await fn();
+        const action = this.undos.pop();
+        if (action) {
+            await animate(action);
+            this.game.soundController.pop();
             this.deselect();
             this.game.triggerUpdate();
         }
+    }
+
+    async reset() {
+        const nodes = this.undos.reduce((nodeSet, action) => {
+            action.nodes.forEach(n => nodeSet.add(n));
+            return nodeSet;
+        }, new Set<HTMLElement>());
+        
+        const domChange = async () => {
+            const promises = this.undos.map(action => action.domChange());
+            return Promise.all(promises) as any as Promise<void>;
+        };
+
+        await animate({
+            nodes: [...nodes],
+            domChange,
+        });
+
+        this.game.soundController.pop();
+        this.undos.splice(0);
     }
 
     triggerUpdate() {

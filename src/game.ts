@@ -39,8 +39,13 @@ export class Game extends HTMLElement {
         this.manager?.triggerUpdate();
     }
 
-    resetGame() {
-        this.manager?.resetBuckets();
+    async resetGame() {
+        await this.manager?.reset();
+        this.triggerUpdate();
+    }
+
+    async newGame() {
+        await this.manager?.regenerate();
         this.triggerUpdate();
     }
 }
