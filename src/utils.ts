@@ -40,17 +40,24 @@ export interface AnimatedAction {
     domChange: () => Promise<void>;
 }
 
+const getNodeAnimationDuration = (n: HTMLElement): number => {
+    if ('transitionDurationMs' in n) {
+        if (typeof n.transitionDurationMs === 'number') {
+            return n.transitionDurationMs;
+        }
+        console.error('node.transitionDurationMs was not a number');
+    }
+    console.error('node did not contain a valid transitionDurationMs attribute');
+    return 100;
+}
+
 export const animate = async (action: AnimatedAction): Promise<void> => {
     const { nodes, domChange: fn } = action;
 
     let maxDuration = 0;
     nodes.forEach(n => {
-        const style = getComputedStyle(n);
-        const duration = parseInt(style.getPropertyValue('--transition-duration'));
-        if (!isNaN(duration)) {
-            // assumining milliseconds
-            maxDuration = Math.max(duration, maxDuration);
-        }
+        const duration = getNodeAnimationDuration(n);
+        maxDuration = Math.max(duration, maxDuration);
         n.dataset.prevTransform = n.style.transform;
         n.style.transform = 'scale(0.0)';
     });

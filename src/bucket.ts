@@ -37,9 +37,12 @@ export class Bucket extends HTMLElement {
             return;
         }
         const first = bubbles.shift();
-        first?.select();
+        if (!first) {
+            return;
+        }
+        first.select();
         for (let i = 0; i < bubbles.length; i++) {
-            if (bubbles[i].emoji !== first?.emoji) {
+            if (bubbles[i].emoji !== first.emoji) {
                 break;
             }
             bubbles[i].select();

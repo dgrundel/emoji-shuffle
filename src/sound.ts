@@ -42,11 +42,11 @@ export class SoundController {
 
     pop() {
         const i = Math.floor(Math.random() * pops.length);
-        this.play(pops[i], 0.45);
+        this.play(pops[i], 0.4);
     }
 
     fanfare() {
-        this.play(Sound.Tada, 0.6);
+        this.play(Sound.Tada, 0.4);
     }
 
     click() {

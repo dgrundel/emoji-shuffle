@@ -151,16 +151,22 @@
         }
         return parsed;
     }
+    const getNodeAnimationDuration = (n) => {
+        if ('transitionDurationMs' in n) {
+            if (typeof n.transitionDurationMs === 'number') {
+                return n.transitionDurationMs;
+            }
+            console.error('node.transitionDurationMs was not a number');
+        }
+        console.error('node did not contain a valid transitionDurationMs attribute');
+        return 100;
+    };
     const animate = async (action) => {
         const { nodes, domChange: fn } = action;
         let maxDuration = 0;
         nodes.forEach(n => {
-            const style = getComputedStyle(n);
-            const duration = parseInt(style.getPropertyValue('--transition-duration'));
-            if (!isNaN(duration)) {
-                // assumining milliseconds
-                maxDuration = Math.max(duration, maxDuration);
-            }
+            const duration = getNodeAnimationDuration(n);
+            maxDuration = Math.max(duration, maxDuration);
             n.dataset.prevTransform = n.style.transform;
             n.style.transform = 'scale(0.0)';
         });
@@ -225,11 +231,13 @@
 
     class Bubble extends HTMLElement {
         static selectedClass = 'selected';
+        transitionDurationMs = 50;
         emoji;
         constructor(emoji) {
             super();
             this.emoji = emoji;
             this.dataset.emoji = emoji;
+            this.style.setProperty('--transition-duration', `${this.transitionDurationMs}ms`);
         }
         select() {
             this.classList.add(Bubble.selectedClass);
@@ -273,9 +281,12 @@
                 return;
             }
             const first = bubbles.shift();
-            first?.select();
+            if (!first) {
+                return;
+            }
+            first.select();
             for (let i = 0; i < bubbles.length; i++) {
-                if (bubbles[i].emoji !== first?.emoji) {
+                if (bubbles[i].emoji !== first.emoji) {
                     break;
                 }
                 bubbles[i].select();
@@ -605,10 +616,10 @@
         }
         pop() {
             const i = Math.floor(Math.random() * pops.length);
-            this.play(pops[i], 0.45);
+            this.play(pops[i], 0.4);
         }
         fanfare() {
-            this.play(Sound.Tada, 0.6);
+            this.play(Sound.Tada, 0.4);
         }
         click() {
             this.play(Sound.Click, 0.8);
