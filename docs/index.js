@@ -463,6 +463,7 @@
                 max: this.game.config.emojiCandidates.length,
                 value: this.game.config.emojiCount,
                 handler: n => {
+                    this.game.soundController.altClick();
                     this.game.config.emojiCount = n;
                     this.game.resetGame();
                 }
@@ -474,6 +475,7 @@
                 max: 4,
                 value: this.game.config.emptyCount,
                 handler: n => {
+                    this.game.soundController.altClick();
                     this.game.config.emptyCount = n;
                     this.game.resetGame();
                 }
@@ -485,6 +487,7 @@
                 max: 6,
                 value: this.game.config.bucketHeight,
                 handler: n => {
+                    this.game.soundController.altClick();
                     this.game.config.bucketHeight = n;
                     this.game.resetGame();
                 }
@@ -525,22 +528,23 @@
             }
             return this.cache[src];
         }
-        play(src) {
+        play(src, volume = 1.0) {
             if (!this.enabled) {
                 return;
             }
             const a = this.getAudio(src);
+            a.volume = volume;
             a.play();
         }
         pop() {
             const i = Math.floor(Math.random() * pops.length);
-            this.play(pops[i]);
+            this.play(pops[i], 0.45);
         }
         fanfare() {
-            this.play('tada.wav');
+            this.play('tada.wav', 0.6);
         }
         click() {
-            this.play('click.wav');
+            this.play('click.wav', 0.8);
         }
         altClick() {
             this.play('alt-click.wav');

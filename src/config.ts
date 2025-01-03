@@ -29,6 +29,7 @@ export class ConfigPanel extends HTMLElement {
             max: this.game.config.emojiCandidates.length,
             value: this.game.config.emojiCount,
             handler: n => { 
+                this.game.soundController.altClick();
                 this.game.config.emojiCount = n;
                 this.game.resetGame();
             }
@@ -41,6 +42,7 @@ export class ConfigPanel extends HTMLElement {
             max: 4,
             value: this.game.config.emptyCount,
             handler: n => { 
+                this.game.soundController.altClick();
                 this.game.config.emptyCount = n;
                 this.game.resetGame();
             }
@@ -53,6 +55,7 @@ export class ConfigPanel extends HTMLElement {
             max: 6,
             value: this.game.config.bucketHeight,
             handler: n => { 
+                this.game.soundController.altClick();
                 this.game.config.bucketHeight = n;
                 this.game.resetGame();
             }
