@@ -166,6 +166,8 @@ emoji-game-config {
         text-shadow: 0 0 .1rem #000;
     
         label {
+            width: 100%;
+
             input {
                 display: block;
             }
@@ -217,4 +219,10 @@ button {
         padding-left: 1ex;
         transform: rotate(12deg) scale(1.5);
     }
+}
+
+.checkbox-label {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: .5rem;
 }

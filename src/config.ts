@@ -1,5 +1,5 @@
 import { Game } from "./game";
-import { createRange } from "./utils";
+import { createCheckbox, createRange } from "./utils";
 
 export class ConfigPanel extends HTMLElement {
     game: Game;
@@ -55,6 +55,14 @@ export class ConfigPanel extends HTMLElement {
             handler: n => { 
                 this.game.config.bucketHeight = n;
                 this.game.resetGame();
+            }
+        }));
+
+        wrap.append(createCheckbox({
+            label: 'Sound effects',
+            checked: this.game.soundController.enabled,
+            handler: checked => {
+                this.game.soundController.enabled = checked;
             }
         }));
 

@@ -185,6 +185,20 @@
         label.append(display);
         return label;
     };
+    const createCheckbox = (opts) => {
+        const text = document.createElement('span');
+        // text.classList.add('checkbox-text');
+        text.textContent = opts.label;
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.checked = opts.checked;
+        input.addEventListener('click', () => opts.handler(input.checked));
+        const label = document.createElement('label');
+        label.classList.add('checkbox-label');
+        label.append(input);
+        label.append(text);
+        return label;
+    };
 
     class Bubble extends HTMLElement {
         static selectedClass = 'selected';
@@ -358,6 +372,7 @@
             if (success) {
                 const confetti = new Confetti();
                 this.append(confetti);
+                this.game.soundController.fanfare();
                 this.undos.splice(0, Infinity);
                 this.game.controls?.triggerUpdate();
                 this.deselect();
@@ -387,10 +402,10 @@
             const movables = selected.slice(0, moves);
             this.undos.push(async () => animate(movables, async () => {
                 movables.forEach(m => src.prepend(m));
-            }));
+            }).then(() => this.game.soundController.pop()));
             return animate(movables, async () => {
                 movables.forEach(m => dest.prepend(m));
-            });
+            }).then(() => this.game.soundController.pop());
         }
         async undo() {
             const fn = this.undos.pop();
@@ -455,6 +470,13 @@
                     this.game.resetGame();
                 }
             }));
+            wrap.append(createCheckbox({
+                label: 'Sound effects',
+                checked: this.game.soundController.enabled,
+                handler: checked => {
+                    this.game.soundController.enabled = checked;
+                }
+            }));
             const closeBtn = document.createElement('button');
             closeBtn.textContent = '⬇️ Close';
             closeBtn.addEventListener('click', () => {
@@ -465,14 +487,49 @@
         }
     }
 
+    const pops = [
+        'pop1.wav',
+        'pop2.wav',
+        'pop3.wav',
+        'pop4.wav',
+        'pop5.wav',
+        'pop6.wav',
+    ];
+    class SoundController {
+        cache = {};
+        enabled = true;
+        getAudio(src) {
+            if (!this.cache[src]) {
+                this.cache[src] = new Audio(src);
+            }
+            return this.cache[src];
+        }
+        play(src) {
+            if (!this.enabled) {
+                return;
+            }
+            const a = this.getAudio(src);
+            a.play();
+        }
+        pop() {
+            const i = Math.floor(Math.random() * pops.length);
+            this.play(pops[i]);
+        }
+        fanfare() {
+            this.play('tada.wav');
+        }
+    }
+
     class Game extends HTMLElement {
         config;
+        soundController;
         controls;
         manager;
         configPanel;
         constructor(config) {
             super();
             this.config = config;
+            this.soundController = new SoundController();
         }
         connectedCallback() {
             this.controls = new Controls(this);

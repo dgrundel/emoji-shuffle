@@ -76,6 +76,7 @@ export class BucketManager extends HTMLElement {
         if (success) {
             const confetti = new Confetti();
             this.append(confetti);
+            this.game.soundController.fanfare();
 
             this.undos.splice(0, Infinity);
             this.game.controls?.triggerUpdate();
@@ -111,11 +112,11 @@ export class BucketManager extends HTMLElement {
         
         this.undos.push(async () => animate(movables, async () => {
             movables.forEach(m => src.prepend(m));
-        }));
+        }).then(() => this.game.soundController.pop()));
         
         return animate(movables, async () => {
             movables.forEach(m => dest.prepend(m));
-        });
+        }).then(() => this.game.soundController.pop());
     }
 
     async undo() {
