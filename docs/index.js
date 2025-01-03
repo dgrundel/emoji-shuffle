@@ -600,6 +600,12 @@
     class SoundController {
         cache = {};
         enabled = true;
+        constructor() {
+            this.preload();
+        }
+        preload() {
+            Object.values(Sound).forEach(s => this.getAudio(s));
+        }
         getAudio(src) {
             if (!this.cache[src]) {
                 this.cache[src] = new Audio(src);

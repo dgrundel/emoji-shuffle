@@ -23,6 +23,14 @@ export class SoundController {
     private cache: Partial<Record<Sound, HTMLAudioElement>> = {};
     enabled: boolean = true;
 
+    constructor() {
+        this.preload();
+    }
+
+    private preload() {
+        Object.values(Sound).forEach(s => this.getAudio(s));
+    }
+
     private getAudio(src: Sound): HTMLAudioElement {
         if (!this.cache[src]) {
             this.cache[src] = new Audio(src);
