@@ -31,7 +31,7 @@ export class ConfigPanel extends HTMLElement {
             handler: n => { 
                 this.game.soundController.altClick();
                 this.game.config.emojiCount = n;
-                this.game.resetGame();
+                this.game.newGame();
             }
         }));
 
@@ -44,7 +44,7 @@ export class ConfigPanel extends HTMLElement {
             handler: n => { 
                 this.game.soundController.altClick();
                 this.game.config.emptyCount = n;
-                this.game.resetGame();
+                this.game.newGame();
             }
         }));
 
@@ -57,7 +57,7 @@ export class ConfigPanel extends HTMLElement {
             handler: n => { 
                 this.game.soundController.altClick();
                 this.game.config.bucketHeight = n;
-                this.game.resetGame();
+                this.game.newGame();
             }
         }));
 

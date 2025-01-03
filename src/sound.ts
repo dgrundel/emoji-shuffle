@@ -5,7 +5,8 @@ enum Sound {
     Pop4 = 'pop4.wav',
     Pop5 = 'pop5.wav',
     Pop6 = 'pop6.wav',
-    Tada = 'tada.wav',
+    // Tada = 'tada.wav',
+    Win = 'win.wav',
     Click = 'click.wav',
     AltClick = 'alt-click.wav',
 }
@@ -50,11 +51,11 @@ export class SoundController {
 
     pop() {
         const i = Math.floor(Math.random() * pops.length);
-        this.play(pops[i], 0.4);
+        this.play(pops[i], 0.3);
     }
 
     fanfare() {
-        this.play(Sound.Tada, 0.4);
+        this.play(Sound.Win, 0.9);
     }
 
     click() {

@@ -531,7 +531,7 @@
                 handler: n => {
                     this.game.soundController.altClick();
                     this.game.config.emojiCount = n;
-                    this.game.resetGame();
+                    this.game.newGame();
                 }
             }));
             // spares [1-4]
@@ -543,7 +543,7 @@
                 handler: n => {
                     this.game.soundController.altClick();
                     this.game.config.emptyCount = n;
-                    this.game.resetGame();
+                    this.game.newGame();
                 }
             }));
             // height [4 - 6]
@@ -555,7 +555,7 @@
                 handler: n => {
                     this.game.soundController.altClick();
                     this.game.config.bucketHeight = n;
-                    this.game.resetGame();
+                    this.game.newGame();
                 }
             }));
             wrap.append(createCheckbox({
@@ -585,7 +585,8 @@
         Sound["Pop4"] = "pop4.wav";
         Sound["Pop5"] = "pop5.wav";
         Sound["Pop6"] = "pop6.wav";
-        Sound["Tada"] = "tada.wav";
+        // Tada = 'tada.wav',
+        Sound["Win"] = "win.wav";
         Sound["Click"] = "click.wav";
         Sound["AltClick"] = "alt-click.wav";
     })(Sound || (Sound = {}));
@@ -622,10 +623,10 @@
         }
         pop() {
             const i = Math.floor(Math.random() * pops.length);
-            this.play(pops[i], 0.4);
+            this.play(pops[i], 0.3);
         }
         fanfare() {
-            this.play(Sound.Tada, 0.4);
+            this.play(Sound.Win, 0.9);
         }
         click() {
             this.play(Sound.Click, 0.8);
