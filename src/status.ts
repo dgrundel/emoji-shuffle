@@ -7,6 +7,8 @@ export class StatusBar extends HTMLElement {
     game: Game;
     private bestStreak: number;
     private currentStreak: number = 0;
+    currentStreakDisplay?: HTMLElement;
+    bestStreakDisplay?: HTMLElement;
 
     constructor(game: Game) {
         super();
@@ -17,6 +19,14 @@ export class StatusBar extends HTMLElement {
 
     connectedCallback() {
         this.triggerUpdate();
+
+        this.currentStreakDisplay = document.createElement('span');
+        this.currentStreakDisplay.classList.add('status-item');
+        this.append(this.currentStreakDisplay);
+
+        this.bestStreakDisplay = document.createElement('span');
+        this.bestStreakDisplay.classList.add('status-item');
+        this.append(this.bestStreakDisplay);
     }
 
     incrementStreak() {
@@ -30,7 +40,12 @@ export class StatusBar extends HTMLElement {
     }
 
     triggerUpdate() {
-        this.textContent = `Current streak: ${this.currentStreak} (Best streak: ${this.bestStreak})`;
+        if (this.currentStreakDisplay) {
+            this.currentStreakDisplay.textContent = `Current streak: ${this.currentStreak}`;
+        }
+        if (this.bestStreakDisplay) {
+            this.bestStreakDisplay.textContent = `Best streak: ${this.bestStreak}`;
+        }
     }
 
     triggerGameWin() {

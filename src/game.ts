@@ -29,12 +29,13 @@ export class Game extends HTMLElement {
 
     connectedCallback() {
         this.statusBar = new StatusBar(this);
-        this.append(this.statusBar);
         this.controls = new Controls(this);
-        this.append(this.controls);
         this.manager = new BucketManager(this);
-        this.append(this.manager);
         this.configPanel = new ConfigPanel(this);
+        
+        this.append(this.statusBar);
+        this.append(this.controls);
+        this.append(this.manager);
         this.append(this.configPanel);
         this.resetGame();
         this.triggerUpdate();

@@ -623,6 +623,8 @@
         game;
         bestStreak;
         currentStreak = 0;
+        currentStreakDisplay;
+        bestStreakDisplay;
         constructor(game) {
             super();
             this.game = game;
@@ -630,6 +632,12 @@
         }
         connectedCallback() {
             this.triggerUpdate();
+            this.currentStreakDisplay = document.createElement('span');
+            this.currentStreakDisplay.classList.add('status-item');
+            this.append(this.currentStreakDisplay);
+            this.bestStreakDisplay = document.createElement('span');
+            this.bestStreakDisplay.classList.add('status-item');
+            this.append(this.bestStreakDisplay);
         }
         incrementStreak() {
             this.currentStreak++;
@@ -639,7 +647,12 @@
             }
         }
         triggerUpdate() {
-            this.textContent = `Current streak: ${this.currentStreak} (Best streak: ${this.bestStreak})`;
+            if (this.currentStreakDisplay) {
+                this.currentStreakDisplay.textContent = `Current streak: ${this.currentStreak}`;
+            }
+            if (this.bestStreakDisplay) {
+                this.bestStreakDisplay.textContent = `Best streak: ${this.bestStreak}`;
+            }
         }
         triggerGameWin() {
             this.incrementStreak();
@@ -667,12 +680,12 @@
         }
         connectedCallback() {
             this.statusBar = new StatusBar(this);
-            this.append(this.statusBar);
             this.controls = new Controls(this);
-            this.append(this.controls);
             this.manager = new BucketManager(this);
-            this.append(this.manager);
             this.configPanel = new ConfigPanel(this);
+            this.append(this.statusBar);
+            this.append(this.controls);
+            this.append(this.manager);
             this.append(this.configPanel);
             this.resetGame();
             this.triggerUpdate();
