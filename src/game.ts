@@ -4,6 +4,7 @@ import { ConfigPanel } from './config';
 import { SoundController } from './sound';
 import { StatusBar } from './status';
 import { Confetti } from './confetti';
+import { getChildren } from './utils';
 
 export interface GameConfig {
     emojiCandidates: string[];
@@ -65,6 +66,9 @@ export class Game extends HTMLElement {
     }
 
     async newGame() {
+        // remove confetti
+        getChildren(this, Confetti).forEach(c => c.parentNode?.removeChild(c));
+        
         const wonPrev = this.won;
         this.won = false;
         this.statusBar?.triggerNewGame(wonPrev);

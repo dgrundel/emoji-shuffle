@@ -727,6 +727,8 @@
             this.triggerUpdate();
         }
         async newGame() {
+            // remove confetti
+            getChildren(this, Confetti).forEach(c => c.parentNode?.removeChild(c));
             const wonPrev = this.won;
             this.won = false;
             this.statusBar?.triggerNewGame(wonPrev);
