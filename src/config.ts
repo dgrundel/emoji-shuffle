@@ -63,12 +63,14 @@ export class ConfigPanel extends HTMLElement {
             checked: this.game.soundController.enabled,
             handler: checked => {
                 this.game.soundController.enabled = checked;
+                this.game.soundController.click();
             }
         }));
 
         const closeBtn = document.createElement('button');
         closeBtn.textContent = '⬇️ Close';
         closeBtn.addEventListener('click', () => {
+            this.game.soundController.altClick();
             this.hide();
         });
         wrap.append(closeBtn);

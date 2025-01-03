@@ -20,18 +20,25 @@ export class Controls extends HTMLElement {
         this.undoBtn = document.createElement('button');
         this.undoBtn.textContent = '↩️ Undo';
         this.undoBtn.addEventListener('click', () => {
+            this.game.soundController.altClick();
             this.game.manager?.undo();
         });
         this.append(this.undoBtn);
 
         this.resetBtn = document.createElement('button');
         this.resetBtn.textContent = '🔄 Reset';
-        this.resetBtn.addEventListener('click', () => this.game.resetGame());
+        this.resetBtn.addEventListener('click', () => {
+            this.game.soundController.altClick();
+            this.game.resetGame()
+        });
         this.append(this.resetBtn);
 
         const configBtn = document.createElement('button');
         configBtn.textContent = '⚙️';
-        configBtn.addEventListener('click', () => this.game.configPanel?.show());
+        configBtn.addEventListener('click', () => {
+            this.game.soundController.click();
+            this.game.configPanel?.show();
+        });
         this.append(configBtn);
 
         this.triggerUpdate();

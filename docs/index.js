@@ -311,16 +311,23 @@
             this.undoBtn = document.createElement('button');
             this.undoBtn.textContent = '↩️ Undo';
             this.undoBtn.addEventListener('click', () => {
+                this.game.soundController.altClick();
                 this.game.manager?.undo();
             });
             this.append(this.undoBtn);
             this.resetBtn = document.createElement('button');
             this.resetBtn.textContent = '🔄 Reset';
-            this.resetBtn.addEventListener('click', () => this.game.resetGame());
+            this.resetBtn.addEventListener('click', () => {
+                this.game.soundController.altClick();
+                this.game.resetGame();
+            });
             this.append(this.resetBtn);
             const configBtn = document.createElement('button');
             configBtn.textContent = '⚙️';
-            configBtn.addEventListener('click', () => this.game.configPanel?.show());
+            configBtn.addEventListener('click', () => {
+                this.game.soundController.click();
+                this.game.configPanel?.show();
+            });
             this.append(configBtn);
             this.triggerUpdate();
         }
@@ -487,11 +494,13 @@
                 checked: this.game.soundController.enabled,
                 handler: checked => {
                     this.game.soundController.enabled = checked;
+                    this.game.soundController.click();
                 }
             }));
             const closeBtn = document.createElement('button');
             closeBtn.textContent = '⬇️ Close';
             closeBtn.addEventListener('click', () => {
+                this.game.soundController.altClick();
                 this.hide();
             });
             wrap.append(closeBtn);
@@ -529,6 +538,12 @@
         }
         fanfare() {
             this.play('tada.wav');
+        }
+        click() {
+            this.play('click.wav');
+        }
+        altClick() {
+            this.play('alt-click.wav');
         }
     }
 

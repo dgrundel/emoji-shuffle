@@ -35,4 +35,12 @@ export class SoundController {
     fanfare() {
         this.play('tada.wav');
     }
+
+    click() {
+        this.play('click.wav');
+    }
+
+    altClick() {
+        this.play('alt-click.wav');
+    }
 }
