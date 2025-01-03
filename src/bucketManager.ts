@@ -2,7 +2,7 @@ import { Bubble } from "./bubble";
 import { Bucket } from "./bucket";
 import { Confetti } from "./confetti";
 import { Game, GameConfig } from "./game";
-import { animate, clearChildren, doTimes, getChildren, takeRandom } from "./utils";
+import { animate, clearChildren, doTimes, getChildren, shake, takeRandom } from "./utils";
 
 export class BucketManager extends HTMLElement {
     game: Game;
@@ -98,14 +98,13 @@ export class BucketManager extends HTMLElement {
         }
         const existing = getChildren(dest, Bubble);
         if (existing.length !== 0 && existing[0].emoji !== selected[0].emoji) {
-            return;
+            return shake([src]);
         }
 
         const available = this.config.bucketHeight - existing.length;
         const moves = Math.min(available, selected.length);
         if (moves === 0) {
-            // would be cool to do a little shake animation here.
-            return;
+            return shake([dest]);
         }
         
         const movables = selected.slice(0, moves);

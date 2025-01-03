@@ -237,3 +237,20 @@ button {
     grid-template-columns: auto 1fr;
     gap: .5rem;
 }
+
+@keyframes x-shake {
+    0% { transform: translateX(0) }
+    17% { transform: translateX(5px) }
+    34% { transform: translateX(0) }
+    50% { transform: translateX(-5px) }
+    67% { transform: translateX(0) }
+    83% { transform: translateX(5px) }
+    100% { transform: translateX(0) }
+}
+
+.shake {
+    /* animation: name duration timing-function delay iteration-count direction fill-mode; */
+    animation-name: x-shake;
+    animation-duration: 200ms;
+    animation-iteration-count: 3;
+}

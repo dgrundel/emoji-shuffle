@@ -160,6 +160,17 @@
             n.dataset.prevTransform = undefined;
         });
     };
+    const shakeDurationMs = 200;
+    const shake = async (nodes) => {
+        const promises = nodes.map(node => new Promise(resolve => {
+            node.classList.add('shake');
+            setTimeout(() => {
+                node.classList.remove('shake');
+                resolve();
+            }, shakeDurationMs);
+        }));
+        return Promise.all(promises);
+    };
     const createRange = (opts) => {
         const text = document.createElement('span');
         text.classList.add('range-text');
@@ -393,13 +404,12 @@
             }
             const existing = getChildren(dest, Bubble);
             if (existing.length !== 0 && existing[0].emoji !== selected[0].emoji) {
-                return;
+                return shake([src]);
             }
             const available = this.config.bucketHeight - existing.length;
             const moves = Math.min(available, selected.length);
             if (moves === 0) {
-                // would be cool to do a little shake animation here.
-                return;
+                return shake([dest]);
             }
             const movables = selected.slice(0, moves);
             this.undos.push(async () => animate(movables, async () => {

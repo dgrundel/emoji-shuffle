@@ -42,6 +42,18 @@ export const animate = async (nodes: HTMLElement[], fn: () => Promise<void>): Pr
     });
 };
 
+const shakeDurationMs = 200;
+export const shake = async (nodes: HTMLElement[]) => {
+    const promises = nodes.map(node => new Promise<void>(resolve => {
+        node.classList.add('shake');
+        setTimeout(() => {
+            node.classList.remove('shake');
+            resolve();
+        }, shakeDurationMs);
+    }));
+    return Promise.all(promises);
+}
+
 export interface CreateRangeOpts {
     label: string;
     min: number;
