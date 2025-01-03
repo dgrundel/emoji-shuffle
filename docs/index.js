@@ -323,6 +323,9 @@
                 this.resetBtn.disabled = this.game.manager?.undos.length === 0;
             }
         }
+        triggerGameWin() {
+            this.triggerUpdate();
+        }
         connectedCallback() {
             this.undoBtn = document.createElement('button');
             this.undoBtn.textContent = '↩️ Undo';
@@ -413,14 +416,7 @@
                 .filter(b => !b.isEmpty())
                 .every(b => b.checkSuccess());
             if (success) {
-                const confetti = new Confetti();
-                this.append(confetti);
-                this.game.soundController.fanfare();
-                this.undos.splice(0, Infinity);
-                this.game.controls?.triggerUpdate();
-                this.game.statusBar?.incrementStreak();
-                this.game.statusBar?.triggerUpdate();
-                this.deselect();
+                this.game.triggerGameWin();
             }
         }
         async tryMoveTo(dest) {
@@ -492,6 +488,10 @@
         triggerUpdate() {
             getChildren(this, Bucket).forEach(b => b.triggerUpdate());
             this.checkSuccess();
+        }
+        triggerGameWin() {
+            this.undos.splice(0, Infinity);
+            this.deselect();
         }
     }
 
@@ -641,6 +641,15 @@
         triggerUpdate() {
             this.textContent = `Current streak: ${this.currentStreak} (Best streak: ${this.bestStreak})`;
         }
+        triggerGameWin() {
+            this.incrementStreak();
+            this.triggerUpdate();
+        }
+        triggerNewGame(wonPrev) {
+            if (!wonPrev) {
+                this.currentStreak = 0;
+            }
+        }
     }
 
     class Game extends HTMLElement {
@@ -650,6 +659,7 @@
         controls;
         manager;
         configPanel;
+        won = false;
         constructor(config) {
             super();
             this.config = config;
@@ -667,6 +677,15 @@
             this.resetGame();
             this.triggerUpdate();
         }
+        triggerGameWin() {
+            this.won = true;
+            const confetti = new Confetti();
+            this.append(confetti);
+            this.soundController.fanfare();
+            this.controls?.triggerGameWin();
+            this.statusBar?.triggerGameWin();
+            this.manager?.triggerGameWin();
+        }
         triggerUpdate() {
             this.statusBar?.triggerUpdate();
             this.controls?.triggerUpdate();
@@ -677,6 +696,9 @@
             this.triggerUpdate();
         }
         async newGame() {
+            const wonPrev = this.won;
+            this.won = false;
+            this.statusBar?.triggerNewGame(wonPrev);
             await this.manager?.regenerate();
             this.triggerUpdate();
         }

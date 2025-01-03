@@ -32,4 +32,15 @@ export class StatusBar extends HTMLElement {
     triggerUpdate() {
         this.textContent = `Current streak: ${this.currentStreak} (Best streak: ${this.bestStreak})`;
     }
+
+    triggerGameWin() {
+        this.incrementStreak();
+        this.triggerUpdate();
+    }
+
+    triggerNewGame(wonPrev: boolean) {
+        if (!wonPrev) {
+            this.currentStreak = 0;
+        }
+    }
 }

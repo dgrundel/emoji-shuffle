@@ -3,6 +3,7 @@ import { BucketManager } from './bucketManager';
 import { ConfigPanel } from './config';
 import { SoundController } from './sound';
 import { StatusBar } from './status';
+import { Confetti } from './confetti';
 
 export interface GameConfig {
     emojiCandidates: string[];
@@ -18,6 +19,7 @@ export class Game extends HTMLElement {
     controls?: Controls;
     manager?: BucketManager;
     configPanel?: ConfigPanel;
+    won: boolean = false;
 
     constructor(config: GameConfig) {
         super();
@@ -38,6 +40,18 @@ export class Game extends HTMLElement {
         this.triggerUpdate();
     }
 
+    triggerGameWin() {
+        this.won = true;
+
+        const confetti = new Confetti();
+        this.append(confetti);
+        this.soundController.fanfare();
+
+        this.controls?.triggerGameWin();
+        this.statusBar?.triggerGameWin();
+        this.manager?.triggerGameWin();
+    }
+
     triggerUpdate() {
         this.statusBar?.triggerUpdate();
         this.controls?.triggerUpdate();
@@ -50,6 +64,9 @@ export class Game extends HTMLElement {
     }
 
     async newGame() {
+        const wonPrev = this.won;
+        this.won = false;
+        this.statusBar?.triggerNewGame(wonPrev);
         await this.manager?.regenerate();
         this.triggerUpdate();
     }

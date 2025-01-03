@@ -1,6 +1,5 @@
 import { Bubble } from "./bubble";
 import { Bucket } from "./bucket";
-import { Confetti } from "./confetti";
 import { Game, GameConfig } from "./game";
 import { animate, AnimatedAction, clearChildren, doTimes, getChildren, shake, takeRandom } from "./utils";
 
@@ -74,17 +73,7 @@ export class BucketManager extends HTMLElement {
             .filter(b => !b.isEmpty())
             .every(b => b.checkSuccess());
         if (success) {
-            const confetti = new Confetti();
-            this.append(confetti);
-            this.game.soundController.fanfare();
-
-            this.undos.splice(0, Infinity);
-            this.game.controls?.triggerUpdate();
-
-            this.game.statusBar?.incrementStreak();
-            this.game.statusBar?.triggerUpdate();
-
-            this.deselect();
+            this.game.triggerGameWin();
         }
     }
 
@@ -170,5 +159,10 @@ export class BucketManager extends HTMLElement {
     triggerUpdate() {
         getChildren(this, Bucket).forEach(b => b.triggerUpdate());
         this.checkSuccess();
+    }
+
+    triggerGameWin() {
+        this.undos.splice(0, Infinity);
+        this.deselect();
     }
 }

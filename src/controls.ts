@@ -19,6 +19,10 @@ export class Controls extends HTMLElement {
             this.resetBtn.disabled = this.game.manager?.undos.length === 0;
         }
     }
+
+    triggerGameWin() {
+        this.triggerUpdate();
+    }
     
     connectedCallback() {
         this.undoBtn = document.createElement('button');
