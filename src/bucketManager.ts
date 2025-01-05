@@ -143,8 +143,9 @@ export class BucketManager extends HTMLElement {
         }, new Set<HTMLElement>());
         
         const domChange = async () => {
-            const promises = this.undos.map(action => action.domChange());
-            return Promise.all(promises) as any as Promise<void>;
+            return this.undos.reduce((promise, action) => {
+                return promise.then(() => action.domChange()); 
+            }, Promise.resolve());
         };
 
         await animate({

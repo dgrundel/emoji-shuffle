@@ -486,8 +486,9 @@
                 return nodeSet;
             }, new Set());
             const domChange = async () => {
-                const promises = this.undos.map(action => action.domChange());
-                return Promise.all(promises);
+                return this.undos.reduce((promise, action) => {
+                    return promise.then(() => action.domChange());
+                }, Promise.resolve());
             };
             await animate({
                 nodes: [...nodes],
