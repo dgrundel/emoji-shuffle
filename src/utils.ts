@@ -91,32 +91,41 @@ export interface CreateRangeOpts {
 }
 
 export const createRange = (opts: CreateRangeOpts): HTMLElement => {
-    const text = document.createElement('span');
-    text.classList.add('range-text');
-    text.textContent = opts.label;
+    const dom = createDom({
+        name: 'label',
+        classes: ['range-label'],
+        children: [{
+            name: 'span',
+            classes: ['range-text'],
+            textContent: opts.label,
+        },{
+            name: 'input',
+            ref: 'input',
+            attrs: {
+                type: 'range',
+                min: `${opts.min}`,
+                max: `${opts.max}`,
+                step: '1',
+                value: `${opts.value}`,
+            }
+        },{
+            name: 'span',
+            ref: 'display',
+            classes: ['range-display'],
+            textContent: `${opts.value}`
+        }]
+    });
+
+    const input = dom.refs.input as HTMLInputElement;
+    const display = dom.refs.display;
     
-    const display = document.createElement('span');
-    display.classList.add('range-display');
-    display.textContent = `${opts.value}`;
-    
-    const input = document.createElement('input');
-    input.type = 'range';
-    input.min = `${opts.min}`;
-    input.max = `${opts.max}`;
-    input.step = '1';
-    input.value = `${opts.value}`;
     input.addEventListener('input', () => {
         const value = parseInt(input.value);
         opts.handler(value);
         display.textContent = `${value}`;
     });
-    
-    const label = document.createElement('label');
-    label.classList.add('range-label');
-    label.append(text);
-    label.append(input);
-    label.append(display);
-    return label;
+
+    return dom.root;
 };
 
 export interface CreateCheckboxOpts {
@@ -126,20 +135,26 @@ export interface CreateCheckboxOpts {
 }
 
 export const createCheckbox = (opts: CreateCheckboxOpts): HTMLElement => {
-    const text = document.createElement('span');
-    // text.classList.add('checkbox-text');
-    text.textContent = opts.label;
+    const dom = createDom({
+        name: 'label',
+        classes: ['checkbox-label'],
+        children: [{
+            name: 'input',
+            ref: 'input',
+            attrs: {
+                type: 'checkbox',
+                checked: opts.checked
+            }
+        },{
+            name: 'span',
+            textContent: opts.label,
+        }]
+    });
 
-    const input = document.createElement('input');
-    input.type = 'checkbox';
-    input.checked = opts.checked;
+    const input = dom.refs.input as HTMLInputElement;
     input.addEventListener('click', () => opts.handler(input.checked));
-    
-    const label = document.createElement('label');
-    label.classList.add('checkbox-label');
-    label.append(input);
-    label.append(text);
-    return label;
+
+    return dom.root;
 };
 
 export interface DomStruct {
@@ -147,7 +162,7 @@ export interface DomStruct {
     ref?: string;
     textContent?: string;
     classes?: string[];
-    attrs?: Record<string, string>;
+    attrs?: Partial<HTMLElement | HTMLInputElement>;
     children?: DomStruct[];
 }
 

@@ -190,43 +190,69 @@
         return Promise.all(promises);
     };
     const createRange = (opts) => {
-        const text = document.createElement('span');
-        text.classList.add('range-text');
-        text.textContent = opts.label;
-        const display = document.createElement('span');
-        display.classList.add('range-display');
-        display.textContent = `${opts.value}`;
-        const input = document.createElement('input');
-        input.type = 'range';
-        input.min = `${opts.min}`;
-        input.max = `${opts.max}`;
-        input.step = '1';
-        input.value = `${opts.value}`;
+        const dom = createDom({
+            name: 'label',
+            classes: ['range-label'],
+            children: [{
+                    name: 'span',
+                    classes: ['range-text'],
+                    textContent: opts.label,
+                }, {
+                    name: 'input',
+                    ref: 'input',
+                    attrs: {
+                        type: 'range',
+                        min: `${opts.min}`,
+                        max: `${opts.max}`,
+                        step: '1',
+                        value: `${opts.value}`,
+                    }
+                }, {
+                    name: 'span',
+                    ref: 'display',
+                    classes: ['range-display'],
+                    textContent: `${opts.value}`
+                }]
+        });
+        const input = dom.refs.input;
+        const display = dom.refs.display;
         input.addEventListener('input', () => {
             const value = parseInt(input.value);
             opts.handler(value);
             display.textContent = `${value}`;
         });
-        const label = document.createElement('label');
-        label.classList.add('range-label');
-        label.append(text);
-        label.append(input);
-        label.append(display);
-        return label;
+        return dom.root;
     };
     const createCheckbox = (opts) => {
-        const text = document.createElement('span');
-        // text.classList.add('checkbox-text');
-        text.textContent = opts.label;
-        const input = document.createElement('input');
-        input.type = 'checkbox';
-        input.checked = opts.checked;
+        const dom = createDom({
+            name: 'label',
+            classes: ['checkbox-label'],
+            children: [{
+                    name: 'input',
+                    ref: 'input',
+                    attrs: {
+                        type: 'checkbox',
+                        checked: opts.checked
+                    }
+                }, {
+                    name: 'span',
+                    textContent: opts.label,
+                }]
+        });
+        const input = dom.refs.input;
         input.addEventListener('click', () => opts.handler(input.checked));
-        const label = document.createElement('label');
-        label.classList.add('checkbox-label');
-        label.append(input);
-        label.append(text);
-        return label;
+        return dom.root;
+        // const text = document.createElement('span');
+        // text.textContent = opts.label;
+        // const input = document.createElement('input');
+        // input.type = 'checkbox';
+        // input.checked = opts.checked;
+        // input.addEventListener('click', () => opts.handler(input.checked));
+        // const label = document.createElement('label');
+        // label.classList.add('checkbox-label');
+        // label.append(input);
+        // label.append(text);
+        // return label;
     };
     const createDom = (dom) => {
         const root = document.createElement(dom.name);
