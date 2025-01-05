@@ -137,13 +137,19 @@ export class BucketManager extends HTMLElement {
             return
         }
 
-        const nodes = this.undos.reduce((nodeSet, action) => {
+        // empty the list of undos and get a 
+        // copy of all the moves we need to perform
+        // reverse the list so we perform the undo 
+        // actions in the correct (reverse) order
+        const actions = this.undos.splice(0).reverse();
+
+        const nodes = actions.reduce((nodeSet, action) => {
             action.nodes.forEach(n => nodeSet.add(n));
             return nodeSet;
         }, new Set<HTMLElement>());
         
         const domChange = async () => {
-            return this.undos.reduce((promise, action) => {
+            return actions.reduce((promise, action) => {
                 return promise.then(() => action.domChange()); 
             }, Promise.resolve());
         };
@@ -154,7 +160,7 @@ export class BucketManager extends HTMLElement {
         });
 
         // this.game.soundController.pop();
-        this.undos.splice(0);
+        
     }
 
     triggerUpdate() {

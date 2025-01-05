@@ -242,17 +242,6 @@
         const input = dom.refs.input;
         input.addEventListener('click', () => opts.handler(input.checked));
         return dom.root;
-        // const text = document.createElement('span');
-        // text.textContent = opts.label;
-        // const input = document.createElement('input');
-        // input.type = 'checkbox';
-        // input.checked = opts.checked;
-        // input.addEventListener('click', () => opts.handler(input.checked));
-        // const label = document.createElement('label');
-        // label.classList.add('checkbox-label');
-        // label.append(input);
-        // label.append(text);
-        // return label;
     };
     const createDom = (dom) => {
         const root = document.createElement(dom.name);
@@ -529,12 +518,17 @@
             if (this.undos.length === 0) {
                 return;
             }
-            const nodes = this.undos.reduce((nodeSet, action) => {
+            // empty the list of undos and get a 
+            // copy of all the moves we need to perform
+            // reverse the list so we perform the undo 
+            // actions in the correct (reverse) order
+            const actions = this.undos.splice(0).reverse();
+            const nodes = actions.reduce((nodeSet, action) => {
                 action.nodes.forEach(n => nodeSet.add(n));
                 return nodeSet;
             }, new Set());
             const domChange = async () => {
-                return this.undos.reduce((promise, action) => {
+                return actions.reduce((promise, action) => {
                     return promise.then(() => action.domChange());
                 }, Promise.resolve());
             };
@@ -543,7 +537,6 @@
                 domChange,
             });
             // this.game.soundController.pop();
-            this.undos.splice(0);
         }
         triggerUpdate() {
             getChildren(this, Bucket).forEach(b => b.triggerUpdate());
