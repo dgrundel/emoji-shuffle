@@ -141,3 +141,43 @@ export const createCheckbox = (opts: CreateCheckboxOpts): HTMLElement => {
     label.append(text);
     return label;
 };
+
+export interface DomStruct {
+    name: string;
+    ref?: string;
+    textContent?: string;
+    classes?: string[];
+    attrs?: Record<string, string>;
+    children?: DomStruct[];
+}
+
+export interface CreatedDom {
+    root: HTMLElement;
+    refs: Record<string, HTMLElement>;
+}
+
+export const createDom = (dom: DomStruct): CreatedDom => {
+    const root = document.createElement(dom.name);
+    const refs: Record<string, HTMLElement> = {};
+
+    if (dom.ref) {
+        refs[dom.ref] = root;
+    }
+    if (dom.textContent) {
+        root.textContent = dom.textContent
+    }
+    if (dom.classes) {
+        root.classList.add(...dom.classes);
+    }
+    if (dom.attrs) {
+        Object.assign(root, dom.attrs);
+    }
+
+    dom.children?.map(c => createDom(c))
+        .forEach(child => {
+            root.append(child.root);
+            Object.assign(refs, child.refs);
+        });
+
+    return {root, refs};
+};

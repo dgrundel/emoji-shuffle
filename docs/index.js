@@ -228,6 +228,28 @@
         label.append(text);
         return label;
     };
+    const createDom = (dom) => {
+        const root = document.createElement(dom.name);
+        const refs = {};
+        if (dom.ref) {
+            refs[dom.ref] = root;
+        }
+        if (dom.textContent) {
+            root.textContent = dom.textContent;
+        }
+        if (dom.classes) {
+            root.classList.add(...dom.classes);
+        }
+        if (dom.attrs) {
+            Object.assign(root, dom.attrs);
+        }
+        dom.children?.map(c => createDom(c))
+            .forEach(child => {
+            root.append(child.root);
+            Object.assign(refs, child.refs);
+        });
+        return { root, refs };
+    };
 
     class Bubble extends HTMLElement {
         static selectedClass = 'selected';
@@ -650,13 +672,29 @@
             this.bestStreak = getNumberFromLocalStorage(bestStreakKey, 0);
         }
         connectedCallback() {
-            this.currentStreakDisplay = document.createElement('div');
-            this.currentStreakDisplay.classList.add('status-item');
-            this.bestStreakDisplay = document.createElement('div');
-            this.bestStreakDisplay.classList.add('status-item');
+            const currDom = createDom({
+                name: 'div',
+                classes: ['status-item'],
+                textContent: 'Current streak: ',
+                children: [{
+                        name: 'em',
+                        ref: 'display'
+                    }]
+            });
+            this.append(currDom.root);
+            this.currentStreakDisplay = currDom.refs['display'];
+            const best = createDom({
+                name: 'div',
+                classes: ['status-item'],
+                textContent: 'Best streak: ',
+                children: [{
+                        name: 'em',
+                        ref: 'display'
+                    }]
+            });
+            this.append(best.root);
+            this.bestStreakDisplay = best.refs['display'];
             this.triggerUpdate();
-            this.append(this.currentStreakDisplay);
-            this.append(this.bestStreakDisplay);
         }
         incrementStreak() {
             this.currentStreak++;
@@ -667,10 +705,10 @@
         }
         triggerUpdate() {
             if (this.currentStreakDisplay) {
-                this.currentStreakDisplay.textContent = `Current streak: ${this.currentStreak}`;
+                this.currentStreakDisplay.textContent = this.currentStreak.toFixed(0);
             }
             if (this.bestStreakDisplay) {
-                this.bestStreakDisplay.textContent = `Best streak: ${this.bestStreak}`;
+                this.bestStreakDisplay.textContent = this.bestStreak.toFixed(0);
             }
         }
         triggerGameWin() {

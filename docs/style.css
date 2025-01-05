@@ -20,10 +20,10 @@ html, body, input, button {
     line-height: 1;
 }
 
-/* em {
+em {
     font-style: normal;
     font-size: 1.2em;
-} */
+}
 
 emoji-game {
     --border-width: .4rem;

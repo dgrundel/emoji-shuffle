@@ -1,5 +1,5 @@
 import { Game } from "./game";
-import { getNumberFromLocalStorage } from "./utils";
+import { createDom, getNumberFromLocalStorage } from "./utils";
 
 const bestStreakKey = 'best-streak';
 
@@ -18,16 +18,31 @@ export class StatusBar extends HTMLElement {
     }
 
     connectedCallback() {
+        const currDom = createDom({
+            name: 'div',
+            classes: ['status-item'],
+            textContent: 'Current streak: ',
+            children: [{
+                name: 'em',
+                ref: 'display'
+            }]
+        });
+        this.append(currDom.root);
+        this.currentStreakDisplay = currDom.refs['display'];
 
-        this.currentStreakDisplay = document.createElement('div');
-        this.currentStreakDisplay.classList.add('status-item');
-
-        this.bestStreakDisplay = document.createElement('div');
-        this.bestStreakDisplay.classList.add('status-item');
+        const best = createDom({
+            name: 'div',
+            classes: ['status-item'],
+            textContent: 'Best streak: ',
+            children: [{
+                name: 'em',
+                ref: 'display'
+            }]
+        });
+        this.append(best.root);
+        this.bestStreakDisplay = best.refs['display'];
 
         this.triggerUpdate();
-        this.append(this.currentStreakDisplay);
-        this.append(this.bestStreakDisplay);
     }
 
     incrementStreak() {
@@ -42,10 +57,10 @@ export class StatusBar extends HTMLElement {
 
     triggerUpdate() {
         if (this.currentStreakDisplay) {
-            this.currentStreakDisplay.textContent = `Current streak: ${this.currentStreak}`;
+            this.currentStreakDisplay.textContent = this.currentStreak.toFixed(0);
         }
         if (this.bestStreakDisplay) {
-            this.bestStreakDisplay.textContent = `Best streak: ${this.bestStreak}`;
+            this.bestStreakDisplay.textContent = this.bestStreak.toFixed(0);
         }
     }
 
