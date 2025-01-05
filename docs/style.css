@@ -131,8 +131,8 @@ emoji-game-bubble {
         content: attr(data-emoji);
         font-size: calc(var(--bubble-size) * 1.05);
         position: relative;
-        top: .05em;
-        font-size-adjust: 0.60;
+        top: .1em;
+        left: .05em;
         opacity: .9;
     }
 }
