@@ -68,7 +68,7 @@ emoji-bucket-manager {
 
 @media screen and (orientation:landscape) {
     emoji-bucket-manager {
-        --bucket-container-width: calc(48vw - 4rem);
+        --bucket-container-width: 50vh;
     }
 }
 
@@ -270,23 +270,22 @@ button {
 }
 
 emoji-game-status-bar {
-    width: 100vw;
-    text-align: center;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: .5rem;
+    
 
-    font-size: 1.15rem;
-    text-transform: uppercase;
+    font-size: 1.12rem;
     color: rgba(255, 255, 255, 0.95);
     text-shadow: 0 0 .1rem #000;
 
-    padding-top: .3rem;
+    padding-top: .5rem;
 
     .status-item {
         display: inline-block;
-        margin: 0 .2rem;
-
         transform: rotate(-2.5deg);
         padding: .3rem;
-        text-align: center;
         background-color: rgba(0, 0, 0, 0.35);
         border-radius: .3rem;
     }
