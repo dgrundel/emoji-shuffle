@@ -5,6 +5,7 @@ import { SoundController } from './sound';
 import { StatusBar } from './status';
 import { Confetti } from './confetti';
 import { getChildren } from './utils';
+import { Banner } from './banner';
 
 export interface GameConfig {
     emojiCandidates: string[];
@@ -45,8 +46,8 @@ export class Game extends HTMLElement {
     triggerGameWin() {
         this.won = true;
 
-        const confetti = new Confetti();
-        this.append(confetti);
+        this.append(new Confetti());
+        this.append(new Banner('You won!'));
         this.soundController.fanfare();
 
         this.manager?.triggerGameWin();
@@ -66,8 +67,9 @@ export class Game extends HTMLElement {
     }
 
     async newGame() {
-        // remove confetti
+        // remove confetti & banner
         getChildren(this, Confetti).forEach(c => c.parentNode?.removeChild(c));
+        getChildren(this, Banner).forEach(c => c.parentNode?.removeChild(c));
         
         const wonPrev = this.won;
         this.won = false;

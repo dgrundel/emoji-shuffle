@@ -6,6 +6,7 @@ import { Controls } from './controls';
 import { BucketManager } from './bucketManager';
 import { ConfigPanel } from './config';
 import { StatusBar } from './status';
+import { Banner } from './banner';
 
 customElements.define('emoji-game', Game);
 customElements.define('emoji-game-config', ConfigPanel);
@@ -15,6 +16,7 @@ customElements.define('emoji-game-controls', Controls);
 customElements.define('emoji-game-bucket', Bucket);
 customElements.define('emoji-game-bubble', Bubble);
 customElements.define('confetti-shower', Confetti);
+customElements.define('game-banner', Banner);
 
 const gameConfig: GameConfig = { 
     emojiCandidates: ['🔥', '🙌', '💯', '😱', '🍪', '💖', '🍕', '🎁', '💀', '✨', '🎉', '👀', '🚀', '😍', '💎'],

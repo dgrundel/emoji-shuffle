@@ -290,3 +290,26 @@ emoji-game-status-bar {
         border-radius: .3rem;
     }
 }
+
+game-banner {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 99;
+
+    align-content: center;
+
+    .banner-content {
+        background-image: linear-gradient(to right, #e90a93, #7e147c);
+        font-size: 3rem;
+        color: #fff;
+        text-shadow: 0 0 .1rem #000;
+        padding: 3rem 6rem;
+        margin: 0 -4rem;
+        transform: rotate(-8deg);
+        border: .5rem solid rgba(255,255,255,.25);
+        text-align: center;
+    }
+}

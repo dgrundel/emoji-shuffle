@@ -741,6 +741,28 @@
         }
     }
 
+    class Banner extends HTMLElement {
+        title;
+        constructor(title) {
+            super();
+            this.title = title;
+        }
+        connectedCallback() {
+            const { root } = createDom({
+                name: 'div',
+                classes: ['banner-content'],
+                children: [{
+                        name: 'div',
+                        textContent: this.title,
+                    }]
+            });
+            this.append(root);
+        }
+        disconnectedCallback() {
+            this.innerHTML = '';
+        }
+    }
+
     class Game extends HTMLElement {
         config;
         soundController;
@@ -768,8 +790,8 @@
         }
         triggerGameWin() {
             this.won = true;
-            const confetti = new Confetti();
-            this.append(confetti);
+            this.append(new Confetti());
+            this.append(new Banner('You won!'));
             this.soundController.fanfare();
             this.manager?.triggerGameWin();
             this.controls?.triggerGameWin();
@@ -785,8 +807,9 @@
             this.triggerUpdate();
         }
         async newGame() {
-            // remove confetti
+            // remove confetti & banner
             getChildren(this, Confetti).forEach(c => c.parentNode?.removeChild(c));
+            getChildren(this, Banner).forEach(c => c.parentNode?.removeChild(c));
             const wonPrev = this.won;
             this.won = false;
             this.statusBar?.triggerNewGame(wonPrev);
@@ -803,6 +826,7 @@
     customElements.define('emoji-game-bucket', Bucket);
     customElements.define('emoji-game-bubble', Bubble);
     customElements.define('confetti-shower', Confetti);
+    customElements.define('game-banner', Banner);
     const gameConfig = {
         emojiCandidates: ['🔥', '🙌', '💯', '😱', '🍪', '💖', '🍕', '🎁', '💀', '✨', '🎉', '👀', '🚀', '😍', '💎'],
         emojiCount: 7,
