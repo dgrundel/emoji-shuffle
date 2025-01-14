@@ -77,6 +77,49 @@ export class BucketManager extends HTMLElement {
         }
     }
 
+    hasAvailableMoves(): boolean {
+        const buckets = getChildren(this, Bucket);
+        const srcs = [] as Bucket[];
+        const dests = [] as Bucket[];
+        
+        for (let b = 0; b < buckets.length; b++) {
+            const bucket = buckets[b];
+            const bubbles = getChildren(bucket, Bubble);
+
+            if (bubbles.length === 0) {
+                console.log('found empty bucket');
+                return true;
+            }
+            if (bubbles.length > 0) {
+                srcs.push(bucket);
+            }
+            if (bubbles.length < this.game.config.bucketHeight) {
+                dests.push(bucket);
+            }
+        }
+        
+        for (let i = 0; i < srcs.length; i++) {
+            const src = srcs[i];
+            const srcBubble = getChildren(src, Bubble)[0];
+
+            for (let j = 0; j < dests.length; j++) {
+                const dest = dests[j];
+                if (src === dest) {
+                    continue;
+                }
+
+                const destBubble = getChildren(dest, Bubble)[0];
+                if (srcBubble.emoji === destBubble.emoji) {
+                    console.log('src', src);
+                    console.log('dest', dest);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     async tryMoveTo(dest: Bucket) {
         const src = getChildren(this, Bucket).find(b => b.hasSelection());
         if (!src) {
