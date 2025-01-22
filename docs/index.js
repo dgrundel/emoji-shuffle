@@ -864,7 +864,14 @@
     customElements.define('confetti-shower', Confetti);
     customElements.define('game-banner', Banner);
     const gameConfig = {
-        emojiCandidates: ['🔥', '🙌', '💯', '😱', '🍪', '💖', '🍕', '🎁', '💀', '✨', '🎉', '👀', '🚀', '😍', '💎'],
+        emojiCandidates: [
+            '🔥', '🙌', '💯', '😱',
+            '🍪', '💖', '🍕', '🎁',
+            '💀', '✨', '🎉', '👀',
+            '🚀', '😍', '💎', '⭐',
+            '🫐', '🍿', '🥤', '🌮',
+            '🥞', '🐥', '🎸', '💃',
+        ],
         emojiCount: 7,
         emptyCount: 2,
         bucketHeight: 4,

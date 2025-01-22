@@ -1,5 +1,5 @@
 [data-emoji="🔥"] {
-    background-color: #7ae086;
+    background-image: linear-gradient(to right, #38ef7d, #11998e);
 }
 [data-emoji="🙌"] {
     background-color: #BDFF6E;
@@ -44,4 +44,38 @@
 }
 [data-emoji="💎"] {
     background-image: linear-gradient(110deg, #00e7ff 2%, #ff9a8b 40%, #ffc3a0 58%, #ffd700 98%);
+}
+[data-emoji="⭐"] {
+    background-image: linear-gradient(160deg, #12608D 0%, #22CDBA 40%);
+    text-shadow: 0 0 2px #000;
+}
+[data-emoji="🫐"] {
+    background-image: linear-gradient(90deg, #FFFDFA 0%, #FF6000 90%);
+    text-shadow: 0 0 3px #fff;
+}
+[data-emoji="🍿"] {
+    background-image: linear-gradient(to right, #a8e063, #56ab2f);
+    text-shadow: 0 0 2px #000;
+}
+[data-emoji="🥤"] {
+    background-image: linear-gradient(147deg, #FFE53B 0%, #FF2525 74%);
+    text-shadow: 0 0 5px #fff;
+}
+[data-emoji="🌮"] {
+    background-image: linear-gradient(90deg, #FAD961 0%, #F76B1C 100%);
+    text-shadow: 0 0 3px #000;
+}
+[data-emoji="🥞"] {
+    background-image: linear-gradient(to right, #F3F9A7, #CAC531);
+    text-shadow: 0 0 3px #000;
+}
+[data-emoji="🐥"] {
+    background-image: linear-gradient(to right, #4ecdff, #507cff);
+}
+[data-emoji="🎸"] {
+    background-image: linear-gradient(to right, #1e9600 5%, #fff200 45%, #fff200 55%, #ff0000 95%);
+}
+[data-emoji="💃"] {
+    background-image: linear-gradient(to right, #34345a, #3c2af5, #0f0c29);
+    text-shadow: 0 0 3px #fff;
 }
