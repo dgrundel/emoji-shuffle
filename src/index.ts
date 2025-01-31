@@ -4,8 +4,8 @@ import { Bubble } from './bubble';
 import { Game, GameConfig } from './game';
 import { Controls } from './controls';
 import { BucketManager } from './bucketManager';
-import { ConfigPanel } from './config';
-import { StatusBar } from './status';
+import { ConfigPanel } from './configPanel';
+import { StatusBar } from './statusBar';
 import { Banner } from './banner';
 
 customElements.define('emoji-game', Game);

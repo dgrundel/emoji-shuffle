@@ -1,8 +1,8 @@
 import { Controls } from './controls';
 import { BucketManager } from './bucketManager';
-import { ConfigPanel } from './config';
-import { SoundController } from './sound';
-import { StatusBar } from './status';
+import { ConfigPanel } from './configPanel';
+import { SoundController } from './soundController';
+import { StatusBar } from './statusBar';
 import { Confetti } from './confetti';
 import { getChildren } from './utils';
 import { Banner } from './banner';
