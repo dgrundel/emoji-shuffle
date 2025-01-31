@@ -265,6 +265,14 @@
         });
         return { root, refs };
     };
+    const zeroPad = (n, digits) => {
+        // ('00'+n).slice(-2);
+        const str = n.toFixed(0);
+        if (str.length >= digits) {
+            return str;
+        }
+        return (new Array(digits).fill('0').join('') + str).slice(-1 * digits);
+    };
 
     class Bubble extends HTMLElement {
         static selectedClass = 'selected';
@@ -432,6 +440,8 @@
             this.setStyleProps();
             this.undos = [];
             this.generateBuckets();
+            this.game.timer.clear();
+            this.game.timer.start();
         }
         setStyleProps() {
             this.style.setProperty('--bucket-count', `${this.config.emojiCount + this.config.emptyCount}`);
@@ -788,9 +798,11 @@
 
     class Banner extends HTMLElement {
         title;
-        constructor(title) {
+        subtitle;
+        constructor(title, subtitle) {
             super();
             this.title = title;
+            this.subtitle = subtitle;
         }
         connectedCallback() {
             const { root } = createDom({
@@ -799,6 +811,10 @@
                 children: [{
                         name: 'div',
                         textContent: this.title,
+                    }, {
+                        name: 'div',
+                        classes: ['banner-subtitle'],
+                        textContent: this.subtitle,
                     }]
             });
             this.append(root);
@@ -808,9 +824,62 @@
         }
     }
 
+    class Timer {
+        spans = [];
+        lastStart = 0;
+        constructor() {
+            document.addEventListener("visibilitychange", this.update.bind(this));
+        }
+        update() {
+            if (document.hidden) {
+                this.stop();
+            }
+            else {
+                this.start();
+            }
+        }
+        isStarted() {
+            return this.lastStart !== 0;
+        }
+        start() {
+            if (this.isStarted()) {
+                return;
+            }
+            this.lastStart = performance.now();
+        }
+        stop() {
+            if (!this.isStarted()) {
+                return;
+            }
+            const span = performance.now() - this.lastStart;
+            this.spans.push(span);
+            this.lastStart = 0;
+        }
+        elapsed() {
+            const spanSum = this.spans.reduce((sum, n) => sum + n, 0);
+            if (this.isStarted()) {
+                const span = performance.now() - this.lastStart;
+                return spanSum + span;
+            }
+            return spanSum;
+        }
+        humanElapsed() {
+            const t = this.elapsed();
+            const sec = Math.floor(t / 1000);
+            const min = Math.floor(sec / 60);
+            const remSec = sec - (min * 60);
+            return `${zeroPad(min, 2)}:${zeroPad(remSec, 2)}`;
+        }
+        clear() {
+            this.spans.splice(0);
+            this.lastStart = 0;
+        }
+    }
+
     class Game extends HTMLElement {
         config;
         soundController;
+        timer;
         statusBar;
         controls;
         manager;
@@ -820,6 +889,7 @@
             super();
             this.config = config;
             this.soundController = new SoundController(this);
+            this.timer = new Timer();
         }
         connectedCallback() {
             this.statusBar = new StatusBar(this);
@@ -835,8 +905,9 @@
         }
         triggerGameWin() {
             this.won = true;
+            this.timer.stop();
             this.append(new Confetti());
-            this.append(new Banner('You won!'));
+            this.append(new Banner('You won!', `${this.timer.humanElapsed()}`));
             this.soundController.fanfare();
             this.manager?.triggerGameWin();
             this.controls?.triggerGameWin();

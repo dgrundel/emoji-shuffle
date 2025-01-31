@@ -2,10 +2,12 @@ import { createDom } from "./utils";
 
 export class Banner extends HTMLElement {
     title: string
+    subtitle?: string
 
-    constructor(title: string) {
+    constructor(title: string, subtitle?: string) {
         super();
         this.title = title;
+        this.subtitle = subtitle;
     }
 
     connectedCallback() {
@@ -15,6 +17,10 @@ export class Banner extends HTMLElement {
             children: [{
                 name: 'div',
                 textContent: this.title,
+            },{
+                name: 'div',
+                classes: ['banner-subtitle'],
+                textContent: this.subtitle,
             }]
         });
 

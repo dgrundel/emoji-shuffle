@@ -196,3 +196,12 @@ export const createDom = (dom: DomStruct): CreatedDom => {
 
     return {root, refs};
 };
+
+export const zeroPad = (n: number, digits: number): string => {
+    // ('00'+n).slice(-2);
+    const str = n.toFixed(0);
+    if (str.length >= digits) {
+        return str;
+    }
+    return (new Array(digits).fill('0').join('') + str).slice(-1 * digits);
+}

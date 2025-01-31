@@ -312,4 +312,8 @@ game-banner {
         border: .5rem solid rgba(255,255,255,.25);
         text-align: center;
     }
+
+    .banner-subtitle {
+        font-size: .6em;
+    }
 }

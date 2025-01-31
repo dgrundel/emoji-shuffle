@@ -6,6 +6,7 @@ import { StatusBar } from './statusBar';
 import { Confetti } from './confetti';
 import { getChildren } from './utils';
 import { Banner } from './banner';
+import { Timer } from './timer';
 
 export interface GameConfig {
     emojiCount: number;
@@ -17,6 +18,7 @@ export interface GameConfig {
 export class Game extends HTMLElement {
     config: GameConfig
     soundController: SoundController;
+    timer: Timer;
     statusBar?: StatusBar;
     controls?: Controls;
     manager?: BucketManager;
@@ -27,6 +29,7 @@ export class Game extends HTMLElement {
         super();
         this.config = config;
         this.soundController = new SoundController(this);
+        this.timer = new Timer();
     }
 
     connectedCallback() {
@@ -45,9 +48,10 @@ export class Game extends HTMLElement {
 
     triggerGameWin() {
         this.won = true;
+        this.timer.stop();
 
         this.append(new Confetti());
-        this.append(new Banner('You won!'));
+        this.append(new Banner('You won!', `${this.timer.humanElapsed()}`));
         this.soundController.fanfare();
 
         this.manager?.triggerGameWin();
