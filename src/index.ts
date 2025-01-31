@@ -7,6 +7,7 @@ import { BucketManager } from './bucketManager';
 import { ConfigPanel } from './configPanel';
 import { StatusBar } from './statusBar';
 import { Banner } from './banner';
+import { persist } from './persisted';
 
 customElements.define('emoji-game', Game);
 customElements.define('emoji-game-config', ConfigPanel);
@@ -18,10 +19,11 @@ customElements.define('emoji-game-bubble', Bubble);
 customElements.define('confetti-shower', Confetti);
 customElements.define('game-banner', Banner);
 
-const gameConfig: GameConfig = { 
-    emojiCount: 7, 
+const gameConfig: GameConfig = persist({
+    emojiCount: 7,
     emptyCount: 2,
     bucketHeight: 4,
-};
+    soundEnabled: true,
+}, 'game-config');
 const game = new Game(gameConfig);
 document.getElementById('root')!.append(game);

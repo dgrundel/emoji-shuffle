@@ -1,3 +1,5 @@
+import { Game } from "./game";
+
 enum Sound {
     Pop1 = 'pop1.wav',
     Pop2 = 'pop2.wav',
@@ -22,9 +24,10 @@ const pops = [
 
 export class SoundController {
     private cache: Partial<Record<Sound, HTMLAudioElement>> = {};
-    enabled: boolean = true;
+    game: Game;
 
-    constructor() {
+    constructor(game: Game) {
+        this.game = game;
         this.preload();
     }
 
@@ -41,7 +44,7 @@ export class SoundController {
     }
 
     private play(sound: Sound, volume: number = 1.0) {
-        if (!this.enabled) {
+        if (!this.game.config.soundEnabled) {
             return;
         }
         const a = this.getAudio(sound);

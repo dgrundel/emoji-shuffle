@@ -646,9 +646,9 @@
             }));
             wrap.append(createCheckbox({
                 label: 'Sound effects',
-                checked: this.game.soundController.enabled,
+                checked: this.game.config.soundEnabled,
                 handler: checked => {
-                    this.game.soundController.enabled = checked;
+                    this.game.config.soundEnabled = checked;
                     this.game.soundController.click();
                 }
             }));
@@ -686,8 +686,9 @@
     ];
     class SoundController {
         cache = {};
-        enabled = true;
-        constructor() {
+        game;
+        constructor(game) {
+            this.game = game;
             this.preload();
         }
         preload() {
@@ -700,7 +701,7 @@
             return this.cache[src];
         }
         play(sound, volume = 1.0) {
-            if (!this.enabled) {
+            if (!this.game.config.soundEnabled) {
                 return;
             }
             const a = this.getAudio(sound);
@@ -818,7 +819,7 @@
         constructor(config) {
             super();
             this.config = config;
-            this.soundController = new SoundController();
+            this.soundController = new SoundController(this);
         }
         connectedCallback() {
             this.statusBar = new StatusBar(this);
@@ -862,6 +863,35 @@
         }
     }
 
+    const persist = (t, storageKey) => {
+        const json = localStorage.getItem(storageKey);
+        const values = Object.assign({}, t);
+        if (json) {
+            try {
+                const stored = JSON.parse(json);
+                Object.assign(values, stored);
+            }
+            catch (e) {
+                console.error(`error parsing json for "${storageKey}"`, e);
+            }
+        }
+        const result = {};
+        Object.keys(values).forEach(key => {
+            Object.defineProperty(result, key, {
+                get() {
+                    return values[key];
+                },
+                set(newValue) {
+                    values[key] = newValue;
+                    localStorage.setItem(storageKey, JSON.stringify(values));
+                },
+                enumerable: true,
+                configurable: true,
+            });
+        });
+        return result;
+    };
+
     customElements.define('emoji-game', Game);
     customElements.define('emoji-game-config', ConfigPanel);
     customElements.define('emoji-game-status-bar', StatusBar);
@@ -871,11 +901,12 @@
     customElements.define('emoji-game-bubble', Bubble);
     customElements.define('confetti-shower', Confetti);
     customElements.define('game-banner', Banner);
-    const gameConfig = {
+    const gameConfig = persist({
         emojiCount: 7,
         emptyCount: 2,
         bucketHeight: 4,
-    };
+        soundEnabled: true,
+    }, 'game-config');
     const game = new Game(gameConfig);
     document.getElementById('root').append(game);
 

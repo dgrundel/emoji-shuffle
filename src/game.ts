@@ -11,6 +11,7 @@ export interface GameConfig {
     emojiCount: number;
     emptyCount: number;
     bucketHeight: number;
+    soundEnabled: boolean;
 }
 
 export class Game extends HTMLElement {
@@ -25,7 +26,7 @@ export class Game extends HTMLElement {
     constructor(config: GameConfig) {
         super();
         this.config = config;
-        this.soundController = new SoundController();
+        this.soundController = new SoundController(this);
     }
 
     connectedCallback() {

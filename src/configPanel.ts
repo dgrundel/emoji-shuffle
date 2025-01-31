@@ -64,9 +64,9 @@ export class ConfigPanel extends HTMLElement {
 
         wrap.append(createCheckbox({
             label: 'Sound effects',
-            checked: this.game.soundController.enabled,
+            checked: this.game.config.soundEnabled,
             handler: checked => {
-                this.game.soundController.enabled = checked;
+                this.game.config.soundEnabled = checked;
                 this.game.soundController.click();
             }
         }));
