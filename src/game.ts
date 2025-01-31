@@ -8,7 +8,6 @@ import { getChildren } from './utils';
 import { Banner } from './banner';
 
 export interface GameConfig {
-    emojiCandidates: string[];
     emojiCount: number;
     emptyCount: number;
     bucketHeight: number;

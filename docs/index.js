@@ -408,6 +408,14 @@
     }
 
     class BucketManager extends HTMLElement {
+        static emojiCandidates = [
+            '🔥', '🙌', '💯', '😱',
+            '🍪', '💖', '🍕', '🎁',
+            '💀', '✨', '🎉', '👀',
+            '🚀', '😍', '💎', '⭐',
+            '🫐', '🍿', '🥤', '🌮',
+            '🥞', '🐥', '🎸', '💃',
+        ];
         game;
         config;
         undos = [];
@@ -430,7 +438,7 @@
             this.style.setProperty('--bucket-height', `${this.config.bucketHeight}`);
         }
         generateBuckets() {
-            const emojiCandidates = this.config.emojiCandidates.slice();
+            const emojiCandidates = BucketManager.emojiCandidates.slice();
             const bubbles = [];
             // generate all the bubbles we need
             doTimes(this.config.emojiCount, () => {
@@ -604,7 +612,7 @@
             wrap.append(createRange({
                 label: 'Emoji Count',
                 min: 5,
-                max: this.game.config.emojiCandidates.length,
+                max: BucketManager.emojiCandidates.length,
                 value: this.game.config.emojiCount,
                 handler: n => {
                     this.game.soundController.altClick();
@@ -864,14 +872,6 @@
     customElements.define('confetti-shower', Confetti);
     customElements.define('game-banner', Banner);
     const gameConfig = {
-        emojiCandidates: [
-            '🔥', '🙌', '💯', '😱',
-            '🍪', '💖', '🍕', '🎁',
-            '💀', '✨', '🎉', '👀',
-            '🚀', '😍', '💎', '⭐',
-            '🫐', '🍿', '🥤', '🌮',
-            '🥞', '🐥', '🎸', '💃',
-        ],
         emojiCount: 7,
         emptyCount: 2,
         bucketHeight: 4,

@@ -4,6 +4,15 @@ import { Game, GameConfig } from "./game";
 import { animate, AnimatedAction, clearChildren, doTimes, getChildren, shake, takeRandom } from "./utils";
 
 export class BucketManager extends HTMLElement {
+    static emojiCandidates = [
+        '🔥', '🙌', '💯', '😱', 
+        '🍪', '💖', '🍕', '🎁', 
+        '💀', '✨', '🎉', '👀', 
+        '🚀', '😍', '💎', '⭐',
+        '🫐', '🍿', '🥤', '🌮',
+        '🥞', '🐥', '🎸', '💃',
+    ];
+
     game: Game;
     config: GameConfig;
     undos: AnimatedAction[] = [];
@@ -31,7 +40,7 @@ export class BucketManager extends HTMLElement {
     }
 
     private generateBuckets() {
-        const emojiCandidates = this.config.emojiCandidates.slice();
+        const emojiCandidates = BucketManager.emojiCandidates.slice();
         const bubbles: Bubble[] = [];
 
         // generate all the bubbles we need

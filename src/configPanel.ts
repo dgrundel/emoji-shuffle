@@ -1,3 +1,4 @@
+import { BucketManager } from "./bucketManager";
 import { Game } from "./game";
 import { createCheckbox, createRange } from "./utils";
 
@@ -26,7 +27,7 @@ export class ConfigPanel extends HTMLElement {
         wrap.append(createRange({
             label: 'Emoji Count',
             min: 5,
-            max: this.game.config.emojiCandidates.length,
+            max: BucketManager.emojiCandidates.length,
             value: this.game.config.emojiCount,
             handler: n => { 
                 this.game.soundController.altClick();
