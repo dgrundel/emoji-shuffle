@@ -940,8 +940,7 @@
             }
             return spanSum;
         }
-        humanElapsed() {
-            const t = this.elapsed();
+        static toHuman(t) {
             const sec = Math.floor(t / 1000);
             const min = Math.floor(sec / 60);
             const remSec = sec - (min * 60);
@@ -984,8 +983,17 @@
         }
         onWon() {
             this.timer.stop();
+            const t = this.timer.elapsed();
+            let message = `Time: ${Timer.toHuman(t)}`;
+            if (t < stats.bestTime || stats.bestTime === 0) {
+                stats.bestTime = t;
+                message += ` New best time!`;
+            }
+            else {
+                message += ` (Best: ${Timer.toHuman(stats.bestTime)})`;
+            }
             this.append(new Confetti());
-            this.append(new Banner('You won!', `${this.timer.humanElapsed()}`));
+            this.append(new Banner('You won!', message));
             this.soundController.fanfare();
         }
         async resetGame() {

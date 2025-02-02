@@ -8,6 +8,7 @@ import { getChildren } from './utils';
 import { Banner } from './banner';
 import { Timer } from './timer';
 import { Dispatcher, MoveType } from './dispatcher';
+import { stats } from './stats';
 
 export interface GameConfig {
     emojiCount: number;
@@ -53,8 +54,17 @@ export class Game extends HTMLElement {
     onWon() {
         this.timer.stop();
 
+        const t = this.timer.elapsed();
+        let message = `Time: ${Timer.toHuman(t)}`;
+        if (t < stats.bestTime || stats.bestTime === 0) {
+            stats.bestTime = t;
+            message += ` New best time!`;
+        } else {
+            message += ` (Best: ${Timer.toHuman(stats.bestTime)})`;
+        }
+
         this.append(new Confetti());
-        this.append(new Banner('You won!', `${this.timer.humanElapsed()}`));
+        this.append(new Banner('You won!', message));
         this.soundController.fanfare();
     }
 

@@ -45,8 +45,7 @@ export class Timer {
         return spanSum;
     }
 
-    humanElapsed() {
-        const t = this.elapsed();
+    static toHuman(t: number) {
         const sec = Math.floor(t / 1000);
         const min = Math.floor(sec / 60);
         const remSec = sec - (min * 60);
