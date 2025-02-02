@@ -304,6 +304,7 @@
         }
         connectedCallback() {
             this.addEventListener('click', this.onClick.bind(this));
+            this.manager.game.dispatcher.onMoved(this.onMoved.bind(this));
         }
         put(b) {
             this.prepend(b);
@@ -312,12 +313,10 @@
             if (this.manager.hasSelection()) {
                 this.manager.tryMoveTo(this).then(() => {
                     this.manager.deselect();
-                    this.manager.game.triggerUpdate();
                 });
             }
             else {
                 this.select();
-                this.manager.game.triggerUpdate();
             }
         }
         select() {
@@ -357,7 +356,7 @@
             this.classList.toggle(Bucket.successClass, success);
             return success;
         }
-        triggerUpdate() {
+        onMoved() {
             this.checkSuccess();
         }
     }
@@ -371,7 +370,7 @@
             super();
             this.game = game;
         }
-        triggerUpdate() {
+        updateUI() {
             if (this.undoBtn) {
                 this.undoBtn.disabled = this.game.manager?.undos.length === 0;
             }
@@ -379,10 +378,13 @@
                 this.resetBtn.disabled = this.game.manager?.undos.length === 0;
             }
         }
-        triggerGameWin() {
-            this.triggerUpdate();
-        }
         connectedCallback() {
+            this.game.dispatcher.onMoved(this.updateUI.bind(this));
+            this.game.dispatcher.onWon(this.updateUI.bind(this));
+            this.createDom();
+            this.updateUI();
+        }
+        createDom() {
             this.undoBtn = document.createElement('button');
             this.undoBtn.textContent = '↩️ Undo';
             this.undoBtn.addEventListener('click', () => {
@@ -411,7 +413,51 @@
                 this.game.configPanel?.show();
             });
             this.append(configBtn);
-            this.triggerUpdate();
+        }
+    }
+
+    var GameEvent;
+    (function (GameEvent) {
+        GameEvent["NewGame"] = "game-events:new-game";
+        GameEvent["Moved"] = "game-events:moved";
+        GameEvent["Won"] = "game-events:won";
+    })(GameEvent || (GameEvent = {}));
+    var MoveType;
+    (function (MoveType) {
+        MoveType[MoveType["Move"] = 0] = "Move";
+        MoveType[MoveType["Undo"] = 1] = "Undo";
+        MoveType[MoveType["Reset"] = 2] = "Reset";
+    })(MoveType || (MoveType = {}));
+    class Dispatcher {
+        target;
+        constructor(target) {
+            this.target = target;
+        }
+        newGame() {
+            this.target.dispatchEvent(new CustomEvent(GameEvent.NewGame));
+        }
+        onNewGame(fn) {
+            this.target.addEventListener(GameEvent.NewGame, fn);
+        }
+        moved(moveType) {
+            this.target.dispatchEvent(new CustomEvent(GameEvent.Moved, {
+                detail: { moveType }
+            }));
+        }
+        onMoved(fn) {
+            this.target.addEventListener(GameEvent.Moved, e => {
+                const moveType = e.detail.moveType;
+                if (typeof moveType === 'undefined') {
+                    console.error('Missing MoveType, got: ', moveType, e);
+                }
+                fn(moveType);
+            });
+        }
+        won() {
+            this.target.dispatchEvent(new CustomEvent(GameEvent.Won));
+        }
+        onWon(fn) {
+            this.target.addEventListener(GameEvent.Won, fn);
         }
     }
 
@@ -433,6 +479,7 @@
             this.config = game.config;
         }
         connectedCallback() {
+            this.game.dispatcher.onMoved(this.onMoved.bind(this));
             this.regenerate();
         }
         async regenerate() {
@@ -442,6 +489,7 @@
             this.generateBuckets();
             this.game.timer.clear();
             this.game.timer.start();
+            this.game.dispatcher.newGame();
         }
         setStyleProps() {
             this.style.setProperty('--bucket-count', `${this.config.emojiCount + this.config.emptyCount}`);
@@ -482,8 +530,13 @@
                 .filter(b => !b.isEmpty())
                 .every(b => b.checkSuccess());
             if (success) {
-                this.game.triggerGameWin();
+                this.won();
             }
+        }
+        won() {
+            this.undos.splice(0, Infinity);
+            this.deselect();
+            this.game.dispatcher.won();
         }
         hasAvailableMoves() {
             const buckets = getChildren(this, Bucket);
@@ -557,15 +610,17 @@
                 domChange: async () => {
                     movables.forEach(m => dest.prepend(m));
                 }
-            }).then(() => this.game.soundController.pop());
+            }).then(() => {
+                this.game.soundController.pop();
+                this.game.dispatcher.moved(MoveType.Move);
+            });
         }
         async undo() {
             const action = this.undos.pop();
             if (action) {
                 await animate(action);
-                // this.game.soundController.pop();
                 this.deselect();
-                this.game.triggerUpdate();
+                this.game.dispatcher.moved(MoveType.Undo);
             }
         }
         async reset() {
@@ -591,14 +646,10 @@
                 domChange,
             });
             // this.game.soundController.pop();
+            this.game.dispatcher.moved(MoveType.Reset);
         }
-        triggerUpdate() {
-            getChildren(this, Bucket).forEach(b => b.triggerUpdate());
+        onMoved() {
             this.checkSuccess();
-        }
-        triggerGameWin() {
-            this.undos.splice(0, Infinity);
-            this.deselect();
         }
     }
 
@@ -740,12 +791,15 @@
         currentStreak = 0;
         currentStreakDisplay;
         bestStreakDisplay;
+        prevWin = false;
         constructor(game) {
             super();
             this.game = game;
             this.bestStreak = getNumberFromLocalStorage(bestStreakKey, 0);
         }
         connectedCallback() {
+            this.game.dispatcher.onWon(this.onWon.bind(this));
+            this.game.dispatcher.onNewGame(this.onNewGame.bind(this));
             const currDom = createDom({
                 name: 'div',
                 classes: ['status-item'],
@@ -768,7 +822,7 @@
             });
             this.append(best.root);
             this.bestStreakDisplay = best.refs['display'];
-            this.triggerUpdate();
+            this.updateUI();
         }
         incrementStreak() {
             this.currentStreak++;
@@ -777,7 +831,8 @@
                 localStorage.setItem(bestStreakKey, this.bestStreak.toFixed(0));
             }
         }
-        triggerUpdate() {
+        // TODO: should use data binding to avoid this
+        updateUI() {
             if (this.currentStreakDisplay) {
                 this.currentStreakDisplay.textContent = this.currentStreak.toFixed(0);
             }
@@ -785,14 +840,17 @@
                 this.bestStreakDisplay.textContent = this.bestStreak.toFixed(0);
             }
         }
-        triggerGameWin() {
+        onWon() {
+            this.prevWin = true;
             this.incrementStreak();
-            this.triggerUpdate();
+            this.updateUI();
         }
-        triggerNewGame(wonPrev) {
-            if (!wonPrev) {
+        onNewGame() {
+            if (!this.prevWin) {
                 this.currentStreak = 0;
+                this.updateUI();
             }
+            this.prevWin = false;
         }
     }
 
@@ -878,6 +936,7 @@
 
     class Game extends HTMLElement {
         config;
+        dispatcher;
         soundController;
         timer;
         statusBar;
@@ -888,6 +947,7 @@
         constructor(config) {
             super();
             this.config = config;
+            this.dispatcher = new Dispatcher(this);
             this.soundController = new SoundController(this);
             this.timer = new Timer();
         }
@@ -896,41 +956,27 @@
             this.controls = new Controls(this);
             this.manager = new BucketManager(this);
             this.configPanel = new ConfigPanel(this);
+            this.dispatcher.onWon(this.onWon.bind(this));
             this.append(this.statusBar);
             this.append(this.controls);
             this.append(this.manager);
             this.append(this.configPanel);
             this.resetGame();
-            this.triggerUpdate();
         }
-        triggerGameWin() {
-            this.won = true;
+        onWon() {
             this.timer.stop();
             this.append(new Confetti());
             this.append(new Banner('You won!', `${this.timer.humanElapsed()}`));
             this.soundController.fanfare();
-            this.manager?.triggerGameWin();
-            this.controls?.triggerGameWin();
-            this.statusBar?.triggerGameWin();
-        }
-        triggerUpdate() {
-            this.statusBar?.triggerUpdate();
-            this.controls?.triggerUpdate();
-            this.manager?.triggerUpdate();
         }
         async resetGame() {
             await this.manager?.reset();
-            this.triggerUpdate();
         }
         async newGame() {
             // remove confetti & banner
             getChildren(this, Confetti).forEach(c => c.parentNode?.removeChild(c));
             getChildren(this, Banner).forEach(c => c.parentNode?.removeChild(c));
-            const wonPrev = this.won;
-            this.won = false;
-            this.statusBar?.triggerNewGame(wonPrev);
             await this.manager?.regenerate();
-            this.triggerUpdate();
         }
     }
 

@@ -9,6 +9,7 @@ export class StatusBar extends HTMLElement {
     private currentStreak: number = 0;
     currentStreakDisplay?: HTMLElement;
     bestStreakDisplay?: HTMLElement;
+    prevWin: boolean = false;
 
     constructor(game: Game) {
         super();
@@ -18,6 +19,9 @@ export class StatusBar extends HTMLElement {
     }
 
     connectedCallback() {
+        this.game.dispatcher.onWon(this.onWon.bind(this));
+        this.game.dispatcher.onNewGame(this.onNewGame.bind(this));
+
         const currDom = createDom({
             name: 'div',
             classes: ['status-item'],
@@ -42,7 +46,7 @@ export class StatusBar extends HTMLElement {
         this.append(best.root);
         this.bestStreakDisplay = best.refs['display'];
 
-        this.triggerUpdate();
+        this.updateUI();
     }
 
     incrementStreak() {
@@ -55,7 +59,8 @@ export class StatusBar extends HTMLElement {
         
     }
 
-    triggerUpdate() {
+    // TODO: should use data binding to avoid this
+    updateUI() {
         if (this.currentStreakDisplay) {
             this.currentStreakDisplay.textContent = this.currentStreak.toFixed(0);
         }
@@ -64,14 +69,17 @@ export class StatusBar extends HTMLElement {
         }
     }
 
-    triggerGameWin() {
+    onWon() {
+        this.prevWin = true;
         this.incrementStreak();
-        this.triggerUpdate();
+        this.updateUI();
     }
 
-    triggerNewGame(wonPrev: boolean) {
-        if (!wonPrev) {
+    onNewGame() {
+        if (!this.prevWin) {
             this.currentStreak = 0;
+            this.updateUI();
         }
+        this.prevWin = false;
     }
 }

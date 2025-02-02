@@ -7,6 +7,7 @@ import { Confetti } from './confetti';
 import { getChildren } from './utils';
 import { Banner } from './banner';
 import { Timer } from './timer';
+import { Dispatcher, MoveType } from './dispatcher';
 
 export interface GameConfig {
     emojiCount: number;
@@ -17,6 +18,7 @@ export interface GameConfig {
 
 export class Game extends HTMLElement {
     config: GameConfig
+    dispatcher: Dispatcher;
     soundController: SoundController;
     timer: Timer;
     statusBar?: StatusBar;
@@ -28,6 +30,7 @@ export class Game extends HTMLElement {
     constructor(config: GameConfig) {
         super();
         this.config = config;
+        this.dispatcher = new Dispatcher(this);
         this.soundController = new SoundController(this);
         this.timer = new Timer();
     }
@@ -37,37 +40,26 @@ export class Game extends HTMLElement {
         this.controls = new Controls(this);
         this.manager = new BucketManager(this);
         this.configPanel = new ConfigPanel(this);
+
+        this.dispatcher.onWon(this.onWon.bind(this));
         
         this.append(this.statusBar);
         this.append(this.controls);
         this.append(this.manager);
         this.append(this.configPanel);
         this.resetGame();
-        this.triggerUpdate();
     }
 
-    triggerGameWin() {
-        this.won = true;
+    onWon() {
         this.timer.stop();
 
         this.append(new Confetti());
         this.append(new Banner('You won!', `${this.timer.humanElapsed()}`));
         this.soundController.fanfare();
-
-        this.manager?.triggerGameWin();
-        this.controls?.triggerGameWin();
-        this.statusBar?.triggerGameWin();
-    }
-
-    triggerUpdate() {
-        this.statusBar?.triggerUpdate();
-        this.controls?.triggerUpdate();
-        this.manager?.triggerUpdate();
     }
 
     async resetGame() {
         await this.manager?.reset();
-        this.triggerUpdate();
     }
 
     async newGame() {
@@ -75,10 +67,6 @@ export class Game extends HTMLElement {
         getChildren(this, Confetti).forEach(c => c.parentNode?.removeChild(c));
         getChildren(this, Banner).forEach(c => c.parentNode?.removeChild(c));
         
-        const wonPrev = this.won;
-        this.won = false;
-        this.statusBar?.triggerNewGame(wonPrev);
         await this.manager?.regenerate();
-        this.triggerUpdate();
     }
 }

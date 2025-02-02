@@ -13,6 +13,7 @@ export class Bucket extends HTMLElement {
 
     connectedCallback() {
         this.addEventListener('click', this.onClick.bind(this));
+        this.manager.game.dispatcher.onMoved(this.onMoved.bind(this));
     }
 
     put(b: Bubble) {
@@ -23,11 +24,9 @@ export class Bucket extends HTMLElement {
         if (this.manager.hasSelection()) {
             this.manager.tryMoveTo(this).then(() => {
                 this.manager.deselect();
-                this.manager.game.triggerUpdate();
             });
         } else {
             this.select();
-            this.manager.game.triggerUpdate();
         }
     }
 
@@ -73,7 +72,7 @@ export class Bucket extends HTMLElement {
         return success;
     }
 
-    triggerUpdate() {
+    onMoved() {
         this.checkSuccess();
     }
 }

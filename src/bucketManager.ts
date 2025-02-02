@@ -1,5 +1,6 @@
 import { Bubble } from "./bubble";
 import { Bucket } from "./bucket";
+import { MoveType } from "./dispatcher";
 import { Game, GameConfig } from "./game";
 import { animate, AnimatedAction, clearChildren, doTimes, getChildren, shake, takeRandom } from "./utils";
 
@@ -24,6 +25,7 @@ export class BucketManager extends HTMLElement {
     }
 
     connectedCallback() {
+        this.game.dispatcher.onMoved(this.onMoved.bind(this));
         this.regenerate();
     }
 
@@ -34,6 +36,7 @@ export class BucketManager extends HTMLElement {
         this.generateBuckets();
         this.game.timer.clear();
         this.game.timer.start();
+        this.game.dispatcher.newGame();
     }
 
     private setStyleProps() {
@@ -84,8 +87,14 @@ export class BucketManager extends HTMLElement {
             .filter(b => !b.isEmpty())
             .every(b => b.checkSuccess());
         if (success) {
-            this.game.triggerGameWin();
+            this.won();
         }
+    }
+
+    won() {
+        this.undos.splice(0, Infinity);
+        this.deselect();
+        this.game.dispatcher.won();
     }
 
     hasAvailableMoves(): boolean {
@@ -173,16 +182,18 @@ export class BucketManager extends HTMLElement {
             domChange: async () => {
                 movables.forEach(m => dest.prepend(m));
             }
-        }).then(() => this.game.soundController.pop());
+        }).then(() => {
+            this.game.soundController.pop();
+            this.game.dispatcher.moved(MoveType.Move);
+        });
     }
 
     async undo() {
         const action = this.undos.pop();
         if (action) {
             await animate(action);
-            // this.game.soundController.pop();
             this.deselect();
-            this.game.triggerUpdate();
+            this.game.dispatcher.moved(MoveType.Undo);
         }
     }
 
@@ -214,16 +225,10 @@ export class BucketManager extends HTMLElement {
         });
 
         // this.game.soundController.pop();
-        
+        this.game.dispatcher.moved(MoveType.Reset);
     }
 
-    triggerUpdate() {
-        getChildren(this, Bucket).forEach(b => b.triggerUpdate());
+    onMoved() {
         this.checkSuccess();
-    }
-
-    triggerGameWin() {
-        this.undos.splice(0, Infinity);
-        this.deselect();
     }
 }

@@ -11,7 +11,7 @@ export class Controls extends HTMLElement {
         this.game = game;
     }
 
-    triggerUpdate() {
+    updateUI() {
         if (this.undoBtn) {
             this.undoBtn.disabled = this.game.manager?.undos.length === 0;
         }
@@ -20,11 +20,15 @@ export class Controls extends HTMLElement {
         }
     }
 
-    triggerGameWin() {
-        this.triggerUpdate();
-    }
-    
     connectedCallback() {
+        this.game.dispatcher.onMoved(this.updateUI.bind(this));
+        this.game.dispatcher.onWon(this.updateUI.bind(this));
+
+        this.createDom();
+        this.updateUI();
+    }
+
+    createDom() {
         this.undoBtn = document.createElement('button');
         this.undoBtn.textContent = '↩️ Undo';
         this.undoBtn.addEventListener('click', () => {
@@ -56,7 +60,5 @@ export class Controls extends HTMLElement {
             this.game.configPanel?.show();
         });
         this.append(configBtn);
-
-        this.triggerUpdate();
     }
 }
