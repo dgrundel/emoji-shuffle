@@ -1,11 +1,9 @@
 import { Game } from "./game";
-import { createDom, getNumberFromLocalStorage } from "./utils";
-
-const bestStreakKey = 'best-streak';
+import { stats } from "./stats";
+import { createDom } from "./utils";
 
 export class StatusBar extends HTMLElement {
     game: Game;
-    private bestStreak: number;
     private currentStreak: number = 0;
     currentStreakDisplay?: HTMLElement;
     bestStreakDisplay?: HTMLElement;
@@ -15,7 +13,6 @@ export class StatusBar extends HTMLElement {
         super();
 
         this.game = game;
-        this.bestStreak = getNumberFromLocalStorage(bestStreakKey, 0);
     }
 
     connectedCallback() {
@@ -52,11 +49,9 @@ export class StatusBar extends HTMLElement {
     incrementStreak() {
         this.currentStreak++;
 
-        if (this.currentStreak > this.bestStreak) {
-            this.bestStreak = this.currentStreak;
-            localStorage.setItem(bestStreakKey, this.bestStreak.toFixed(0));
+        if (this.currentStreak > stats.bestStreak) {
+            stats.bestStreak = this.currentStreak;
         }
-        
     }
 
     // TODO: should use data binding to avoid this
@@ -65,7 +60,7 @@ export class StatusBar extends HTMLElement {
             this.currentStreakDisplay.textContent = this.currentStreak.toFixed(0);
         }
         if (this.bestStreakDisplay) {
-            this.bestStreakDisplay.textContent = this.bestStreak.toFixed(0);
+            this.bestStreakDisplay.textContent = stats.bestStreak.toFixed(0);
         }
     }
 

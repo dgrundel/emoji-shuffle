@@ -21,20 +21,6 @@ export const clearChildren = (node: Node) => {
     }
 };
 
-export function getNumberFromLocalStorage(key: string): number | undefined;
-export function getNumberFromLocalStorage(key: string, fallback: number): number;
-export function getNumberFromLocalStorage(key: string, fallback?: number): number | undefined {
-    const str = localStorage.getItem(key);
-    if (!str) {
-        return fallback;
-    }
-    const parsed = parseInt(str);
-    if (isNaN(parsed)) {
-        return fallback;
-    }
-    return parsed;
-}
-
 export interface AnimatedAction {
     nodes: HTMLElement[];
     domChange: () => Promise<void>;

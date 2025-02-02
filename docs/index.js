@@ -140,17 +140,6 @@
             node.removeChild(node.lastChild);
         }
     };
-    function getNumberFromLocalStorage(key, fallback) {
-        const str = localStorage.getItem(key);
-        if (!str) {
-            return fallback;
-        }
-        const parsed = parseInt(str);
-        if (isNaN(parsed)) {
-            return fallback;
-        }
-        return parsed;
-    }
     const getNodeAnimationDuration = (n) => {
         if ('transitionDurationMs' in n) {
             if (typeof n.transitionDurationMs === 'number') {
@@ -784,10 +773,42 @@
         }
     }
 
-    const bestStreakKey = 'best-streak';
+    const persist = (t, storageKey) => {
+        const json = localStorage.getItem(storageKey);
+        const values = Object.assign({}, t);
+        if (json) {
+            try {
+                const stored = JSON.parse(json);
+                Object.assign(values, stored);
+            }
+            catch (e) {
+                console.error(`error parsing json for "${storageKey}"`, e);
+            }
+        }
+        const result = {};
+        Object.keys(values).forEach(key => {
+            Object.defineProperty(result, key, {
+                get() {
+                    return values[key];
+                },
+                set(newValue) {
+                    values[key] = newValue;
+                    localStorage.setItem(storageKey, JSON.stringify(values));
+                },
+                enumerable: true,
+                configurable: true,
+            });
+        });
+        return result;
+    };
+
+    const stats = persist({
+        bestStreak: 0,
+        bestTime: 0,
+    }, 'game-stats');
+
     class StatusBar extends HTMLElement {
         game;
-        bestStreak;
         currentStreak = 0;
         currentStreakDisplay;
         bestStreakDisplay;
@@ -795,7 +816,6 @@
         constructor(game) {
             super();
             this.game = game;
-            this.bestStreak = getNumberFromLocalStorage(bestStreakKey, 0);
         }
         connectedCallback() {
             this.game.dispatcher.onWon(this.onWon.bind(this));
@@ -826,9 +846,8 @@
         }
         incrementStreak() {
             this.currentStreak++;
-            if (this.currentStreak > this.bestStreak) {
-                this.bestStreak = this.currentStreak;
-                localStorage.setItem(bestStreakKey, this.bestStreak.toFixed(0));
+            if (this.currentStreak > stats.bestStreak) {
+                stats.bestStreak = this.currentStreak;
             }
         }
         // TODO: should use data binding to avoid this
@@ -837,7 +856,7 @@
                 this.currentStreakDisplay.textContent = this.currentStreak.toFixed(0);
             }
             if (this.bestStreakDisplay) {
-                this.bestStreakDisplay.textContent = this.bestStreak.toFixed(0);
+                this.bestStreakDisplay.textContent = stats.bestStreak.toFixed(0);
             }
         }
         onWon() {
@@ -979,35 +998,6 @@
             await this.manager?.regenerate();
         }
     }
-
-    const persist = (t, storageKey) => {
-        const json = localStorage.getItem(storageKey);
-        const values = Object.assign({}, t);
-        if (json) {
-            try {
-                const stored = JSON.parse(json);
-                Object.assign(values, stored);
-            }
-            catch (e) {
-                console.error(`error parsing json for "${storageKey}"`, e);
-            }
-        }
-        const result = {};
-        Object.keys(values).forEach(key => {
-            Object.defineProperty(result, key, {
-                get() {
-                    return values[key];
-                },
-                set(newValue) {
-                    values[key] = newValue;
-                    localStorage.setItem(storageKey, JSON.stringify(values));
-                },
-                enumerable: true,
-                configurable: true,
-            });
-        });
-        return result;
-    };
 
     customElements.define('emoji-game', Game);
     customElements.define('emoji-game-config', ConfigPanel);
