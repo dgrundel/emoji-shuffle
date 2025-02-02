@@ -25,6 +25,11 @@ em {
     font-size: 1.2em;
 }
 
+p {
+    margin: .75rem 0;
+    text-transform: none;
+}
+
 .collapsible {
     transform: scale(1);
     opacity: 1;
@@ -57,6 +62,10 @@ em {
     justify-content: center;
     align-items: center;
     align-content: center;
+}
+
+.text-sm {
+    font-size: .7em;
 }
 
 emoji-game {

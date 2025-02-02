@@ -79,7 +79,13 @@ export class Game extends HTMLElement {
             const dialog = simpleDialog({
                 game: this,
                 content: {
-                    textContent: 'Are you sure?',
+                    children: [{
+                        textContent: 'Are you sure?',
+                    }, {
+                        name: 'p',
+                        classes: ['text-sm'],
+                        textContent: 'Starting a new game will reset your current streak.',
+                    }]
                 },
                 buttons: [{
                     textContent: '✅ Yes',
