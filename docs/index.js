@@ -1015,8 +1015,19 @@
         constructor(game) {
             super();
             this.game = game;
+            this.hide();
         }
         connectedCallback() {
+            this.game.dispatcher.onWon(this.onWon.bind(this));
+            this.game.dispatcher.onNewGame(this.onNewGame.bind(this));
+        }
+        show() {
+            this.classList.remove('hide');
+        }
+        hide() {
+            this.classList.add('hide');
+        }
+        onWon() {
             const title = takeRandom(messages.slice());
             const t = this.game.timer.elapsed();
             let message = `⏱️ ${Timer.toHuman(t)}`;
@@ -1027,9 +1038,16 @@
             else {
                 message += ` ⚡ Best: ${Timer.toHuman(stats.bestTime)}`;
             }
-            this.append(new Confetti());
+            getChildren(this, Banner).forEach(c => c.parentNode?.removeChild(c));
+            getChildren(this, Confetti).forEach(c => c.parentNode?.removeChild(c));
             this.append(new Banner(title, message));
+            this.show();
             this.game.soundController.fanfare();
+            // appending after show so confetti starts falling while visible
+            this.append(new Confetti());
+        }
+        onNewGame() {
+            this.hide();
         }
     }
 
@@ -1055,15 +1073,12 @@
             this.controls = new Controls(this);
             this.manager = new BucketManager(this);
             this.configPanel = new ConfigPanel(this);
-            this.dispatcher.onWon(this.onWon.bind(this));
             this.append(this.statusBar);
             this.append(this.controls);
             this.append(this.manager);
             this.append(this.configPanel);
-            this.resetGame();
-        }
-        onWon() {
             this.append(new Victory(this));
+            this.resetGame();
         }
         async resetGame() {
             await this.manager?.reset();

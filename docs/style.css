@@ -25,6 +25,11 @@ em {
     font-size: 1.2em;
 }
 
+.hide {
+    transform: scale(0);
+    opacity: 0;
+}
+
 emoji-game {
     --border-width: .4rem;
     --border-radius: 1rem;
@@ -198,11 +203,6 @@ g-dialog {
                 display: block;
             }
         }
-    }
-
-    &.hide {
-        transform: scale(0);
-        opacity: 0;
     }
 }
 

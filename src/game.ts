@@ -43,17 +43,13 @@ export class Game extends HTMLElement {
         this.manager = new BucketManager(this);
         this.configPanel = new ConfigPanel(this);
 
-        this.dispatcher.onWon(this.onWon.bind(this));
-        
         this.append(this.statusBar);
         this.append(this.controls);
         this.append(this.manager);
         this.append(this.configPanel);
-        this.resetGame();
-    }
-
-    onWon() {
         this.append(new Victory(this));
+
+        this.resetGame();
     }
 
     async resetGame() {
