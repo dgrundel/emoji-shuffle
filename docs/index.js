@@ -660,6 +660,42 @@
             this.classList.add('collapsed');
         }
     }
+    const simpleDialog = (config) => {
+        const sound = config.game.soundController;
+        const dialog = new Dialog();
+        const buttons = config.buttons && config.buttons.length > 0
+            ? config.buttons
+            : [{
+                    textContent: '⬇️ Close',
+                    handler: () => true,
+                }];
+        const { root, refs } = createDom({
+            name: 'div',
+            classes: ['flex-col'],
+            children: [config.content, {
+                    name: 'div',
+                    classes: ['flex-row'],
+                    children: buttons.map((b, i) => ({
+                        name: 'button',
+                        textContent: b.textContent,
+                        ref: `button-${i}`,
+                    })),
+                }]
+        });
+        // refs.content.append(config.content);
+        buttons.forEach((b, i) => {
+            const el = refs[`button-${i}`];
+            el.addEventListener('click', () => {
+                sound.altClick();
+                const hide = b.handler();
+                if (hide !== false) {
+                    dialog.hide();
+                }
+            });
+        });
+        dialog.append(root);
+        return dialog;
+    };
 
     class ConfigPanel extends HTMLElement {
         game;
@@ -1088,8 +1124,36 @@
             await this.manager?.reset();
         }
         async newGame() {
-            getChildren(this, Victory).forEach(c => c.parentNode?.removeChild(c));
-            await this.manager?.regenerate();
+            const confirmed = await this.confirmNewGame();
+            if (confirmed) {
+                // getChildren(this, Victory).forEach(c => c.parentNode?.removeChild(c));
+                await this.manager?.regenerate();
+            }
+        }
+        async confirmNewGame() {
+            return new Promise(resolve => {
+                const done = (b) => {
+                    resolve(b);
+                    setTimeout(() => dialog.parentElement?.removeChild(dialog), 200);
+                    return true; // close dialog
+                };
+                const dialog = simpleDialog({
+                    game: this,
+                    content: {
+                        name: 'div',
+                        textContent: 'Are you sure?',
+                    },
+                    buttons: [{
+                            textContent: '✅ Yes',
+                            handler: () => done(true),
+                        }, {
+                            textContent: '⬇️ No',
+                            handler: () => done(false),
+                        }]
+                });
+                this.append(dialog);
+                dialog.show();
+            });
         }
     }
 

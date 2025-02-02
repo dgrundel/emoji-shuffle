@@ -4,12 +4,13 @@ import { ConfigPanel } from './configPanel';
 import { SoundController } from './soundController';
 import { StatusBar } from './statusBar';
 import { Confetti } from './confetti';
-import { getChildren } from './utils';
+import { createDom, getChildren } from './utils';
 import { Banner } from './banner';
 import { Timer } from './timer';
 import { Dispatcher, MoveType } from './dispatcher';
 import { stats } from './stats';
 import { Victory } from './victory';
+import { Dialog, simpleDialog } from './dialog';
 
 export interface GameConfig {
     emojiCount: number;
@@ -57,7 +58,38 @@ export class Game extends HTMLElement {
     }
 
     async newGame() {
-        getChildren(this, Victory).forEach(c => c.parentNode?.removeChild(c));
-        await this.manager?.regenerate();
+        const confirmed = await this.confirmNewGame();
+        if (confirmed) {
+            // getChildren(this, Victory).forEach(c => c.parentNode?.removeChild(c));
+            await this.manager?.regenerate();
+        }
+    }
+
+    async confirmNewGame(): Promise<boolean> {
+        return new Promise(resolve => {
+            const done = (b: boolean): boolean => {
+                resolve(b);
+                setTimeout(() => dialog.parentElement?.removeChild(dialog), 200);
+                return true; // close dialog
+            };
+
+            const dialog = simpleDialog({
+                game: this,
+                content: {
+                    name: 'div',
+                    textContent: 'Are you sure?',
+                },
+                buttons: [{
+                    textContent: '✅ Yes',
+                    handler: () => done(true),
+                }, {
+                    textContent: '⬇️ No',
+                    handler: () => done(false),
+                }]
+            });
+            
+            this.append(dialog);
+            dialog.show();
+        });
     }
 }
