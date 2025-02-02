@@ -63,7 +63,7 @@ export class Game extends HTMLElement {
     }
 
     async newGame() {
-        getChildren(this, Victory);
+        getChildren(this, Victory).forEach(c => c.parentNode?.removeChild(c));
         await this.manager?.regenerate();
     }
 }
