@@ -986,13 +986,13 @@
         connectedCallback() {
             const title = takeRandom(messages.slice());
             const t = this.game.timer.elapsed();
-            let message = `Time: ${Timer.toHuman(t)}`;
+            let message = `⏱️ ${Timer.toHuman(t)}`;
             if (t < stats.bestTime || stats.bestTime === 0) {
                 stats.bestTime = t;
-                message += ` New best time!`;
+                message += ` ⚡ New best!`;
             }
             else {
-                message += ` (Best: ${Timer.toHuman(stats.bestTime)})`;
+                message += ` ⚡ Best: ${Timer.toHuman(stats.bestTime)}`;
             }
             this.append(new Confetti());
             this.append(new Banner(title, message));
