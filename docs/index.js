@@ -873,34 +873,6 @@
         }
     }
 
-    class Banner extends HTMLElement {
-        title;
-        subtitle;
-        constructor(title, subtitle) {
-            super();
-            this.title = title;
-            this.subtitle = subtitle;
-        }
-        connectedCallback() {
-            const { root } = createDom({
-                name: 'div',
-                classes: ['banner-content'],
-                children: [{
-                        name: 'div',
-                        textContent: this.title,
-                    }, {
-                        name: 'div',
-                        classes: ['banner-subtitle'],
-                        textContent: this.subtitle,
-                    }]
-            });
-            this.append(root);
-        }
-        disconnectedCallback() {
-            this.innerHTML = '';
-        }
-    }
-
     class Timer {
         spans = [];
         lastStart = 0;
@@ -952,6 +924,82 @@
         }
     }
 
+    class Banner extends HTMLElement {
+        title;
+        subtitle;
+        constructor(title, subtitle) {
+            super();
+            this.title = title;
+            this.subtitle = subtitle;
+        }
+        connectedCallback() {
+            const { root } = createDom({
+                name: 'div',
+                classes: ['banner-content'],
+                children: [{
+                        name: 'div',
+                        textContent: this.title,
+                    }, {
+                        name: 'div',
+                        classes: ['banner-subtitle'],
+                        textContent: this.subtitle,
+                    }]
+            });
+            this.append(root);
+        }
+        disconnectedCallback() {
+            this.innerHTML = '';
+        }
+    }
+
+    const messages = [
+        "Ace move!",
+        "Amazing work!",
+        "Brilliant win!",
+        "Champion!",
+        "Epic victory!",
+        "Fantastic job!",
+        "Legendary!",
+        "Like a boss!",
+        "Magnificent!",
+        "Nailed it!",
+        "Outstanding!",
+        "Success!",
+        "Superstar!",
+        "Top notch!",
+        "Unstoppable!",
+        "Victory dance!",
+        "Well played!",
+        "Winner winner!",
+        "You crushed it!",
+        "You did it!",
+        "You rock!",
+        "You're a star!",
+        "You won!",
+    ];
+    class Victory extends HTMLElement {
+        game;
+        constructor(game) {
+            super();
+            this.game = game;
+        }
+        connectedCallback() {
+            const title = takeRandom(messages.slice());
+            const t = this.game.timer.elapsed();
+            let message = `Time: ${Timer.toHuman(t)}`;
+            if (t < stats.bestTime || stats.bestTime === 0) {
+                stats.bestTime = t;
+                message += ` New best time!`;
+            }
+            else {
+                message += ` (Best: ${Timer.toHuman(stats.bestTime)})`;
+            }
+            this.append(new Confetti());
+            this.append(new Banner(title, message));
+            this.game.soundController.fanfare();
+        }
+    }
+
     class Game extends HTMLElement {
         config;
         dispatcher;
@@ -983,26 +1031,13 @@
         }
         onWon() {
             this.timer.stop();
-            const t = this.timer.elapsed();
-            let message = `Time: ${Timer.toHuman(t)}`;
-            if (t < stats.bestTime || stats.bestTime === 0) {
-                stats.bestTime = t;
-                message += ` New best time!`;
-            }
-            else {
-                message += ` (Best: ${Timer.toHuman(stats.bestTime)})`;
-            }
-            this.append(new Confetti());
-            this.append(new Banner('You won!', message));
-            this.soundController.fanfare();
+            this.append(new Victory(this));
         }
         async resetGame() {
             await this.manager?.reset();
         }
         async newGame() {
-            // remove confetti & banner
-            getChildren(this, Confetti).forEach(c => c.parentNode?.removeChild(c));
-            getChildren(this, Banner).forEach(c => c.parentNode?.removeChild(c));
+            getChildren(this, Victory);
             await this.manager?.regenerate();
         }
     }
@@ -1016,6 +1051,7 @@
     customElements.define('emoji-game-bubble', Bubble);
     customElements.define('confetti-shower', Confetti);
     customElements.define('game-banner', Banner);
+    customElements.define('game-victory', Victory);
     const gameConfig = persist({
         emojiCount: 7,
         emptyCount: 2,

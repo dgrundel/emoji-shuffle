@@ -9,6 +9,7 @@ import { Banner } from './banner';
 import { Timer } from './timer';
 import { Dispatcher, MoveType } from './dispatcher';
 import { stats } from './stats';
+import { Victory } from './victory';
 
 export interface GameConfig {
     emojiCount: number;
@@ -54,18 +55,7 @@ export class Game extends HTMLElement {
     onWon() {
         this.timer.stop();
 
-        const t = this.timer.elapsed();
-        let message = `Time: ${Timer.toHuman(t)}`;
-        if (t < stats.bestTime || stats.bestTime === 0) {
-            stats.bestTime = t;
-            message += ` New best time!`;
-        } else {
-            message += ` (Best: ${Timer.toHuman(stats.bestTime)})`;
-        }
-
-        this.append(new Confetti());
-        this.append(new Banner('You won!', message));
-        this.soundController.fanfare();
+        this.append(new Victory(this));
     }
 
     async resetGame() {
@@ -73,10 +63,7 @@ export class Game extends HTMLElement {
     }
 
     async newGame() {
-        // remove confetti & banner
-        getChildren(this, Confetti).forEach(c => c.parentNode?.removeChild(c));
-        getChildren(this, Banner).forEach(c => c.parentNode?.removeChild(c));
-        
+        getChildren(this, Victory);
         await this.manager?.regenerate();
     }
 }
