@@ -873,6 +873,7 @@
         }
     }
 
+    const decimalPlaces = 2;
     class Timer {
         spans = [];
         lastStart = 0;
@@ -913,10 +914,11 @@
             return spanSum;
         }
         static toHuman(t) {
+            const decimals = (t / 1000).toFixed(decimalPlaces).split('.')[1];
             const sec = Math.floor(t / 1000);
             const min = Math.floor(sec / 60);
             const remSec = sec - (min * 60);
-            return `${zeroPad(min, 2)}:${zeroPad(remSec, 2)}`;
+            return `${zeroPad(min, 2)}:${zeroPad(remSec, 2)}.${decimals}`;
         }
         clear() {
             this.spans.splice(0);

@@ -1,5 +1,7 @@
 import { zeroPad } from "./utils";
 
+const decimalPlaces = 2;
+
 export class Timer {
     spans: number[] = [];
     lastStart = 0;
@@ -46,11 +48,12 @@ export class Timer {
     }
 
     static toHuman(t: number) {
+        const decimals = (t/1000).toFixed(decimalPlaces).split('.')[1];
         const sec = Math.floor(t / 1000);
         const min = Math.floor(sec / 60);
         const remSec = sec - (min * 60);
 
-        return `${zeroPad(min, 2)}:${zeroPad(remSec, 2)}`;
+        return `${zeroPad(min, 2)}:${zeroPad(remSec, 2)}.${decimals}`;
     }
 
     clear() {
