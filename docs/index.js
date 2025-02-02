@@ -644,6 +644,7 @@
         wrap;
         constructor() {
             super();
+            this.classList.add('collapsible');
             this.hide();
             this.wrap = document.createElement('div');
             this.wrap.classList.add('dialog-wrap');
@@ -653,10 +654,10 @@
             };
         }
         show() {
-            this.classList.remove('hide');
+            this.classList.remove('collapsed');
         }
         hide() {
-            this.classList.add('hide');
+            this.classList.add('collapsed');
         }
     }
 
@@ -1022,10 +1023,10 @@
             this.game.dispatcher.onNewGame(this.onNewGame.bind(this));
         }
         show() {
-            this.classList.remove('hide');
+            this.classList.remove('hidden');
         }
         hide() {
-            this.classList.add('hide');
+            this.classList.add('hidden');
         }
         onWon() {
             const title = takeRandom(messages.slice());
@@ -1040,8 +1041,11 @@
             }
             getChildren(this, Banner).forEach(c => c.parentNode?.removeChild(c));
             getChildren(this, Confetti).forEach(c => c.parentNode?.removeChild(c));
-            this.append(new Banner(title, message));
+            const banner = new Banner(title, message);
+            banner.classList.add('collapsible', 'collapsed');
+            this.append(banner);
             this.show();
+            setTimeout(() => banner.classList.remove('collapsed'), 0);
             this.game.soundController.fanfare();
             // appending after show so confetti starts falling while visible
             this.append(new Confetti());

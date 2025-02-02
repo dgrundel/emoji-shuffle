@@ -25,9 +25,20 @@ em {
     font-size: 1.2em;
 }
 
-.hide {
-    transform: scale(0);
-    opacity: 0;
+.collapsible {
+    transform: scale(1);
+    opacity: 1;
+    transition: transform 200ms ease-in-out,
+        opacity 150ms ease-in-out;
+
+    &.collapsed {
+        transform: scale(0);
+        opacity: 0;
+    }
+}
+
+.hidden {
+    display: none;
 }
 
 emoji-game {
@@ -173,10 +184,6 @@ g-dialog {
     z-index: 1000;
     align-content: center;
     text-align: center;
-    transform: scale(1);
-    opacity: 1;
-    transition: transform 200ms ease-in-out,
-        opacity 150ms ease-in-out;
     
     .dialog-wrap {
         display: inline-flex;

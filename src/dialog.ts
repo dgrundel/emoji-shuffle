@@ -5,7 +5,10 @@ export class Dialog extends HTMLElement {
     
     constructor() {
         super();
+
+        this.classList.add('collapsible');
         this.hide();
+
         this.wrap = document.createElement('div');
         this.wrap.classList.add('dialog-wrap');
         this.append(this.wrap);
@@ -15,10 +18,10 @@ export class Dialog extends HTMLElement {
     }
 
     show() {
-        this.classList.remove('hide');
+        this.classList.remove('collapsed');
     }
 
     hide() {
-        this.classList.add('hide');
+        this.classList.add('collapsed');
     }
 }

@@ -48,11 +48,11 @@ export class Victory extends HTMLElement {
     }
 
     show() {
-        this.classList.remove('hide');
+        this.classList.remove('hidden');
     }
 
     hide() {
-        this.classList.add('hide');
+        this.classList.add('hidden');
     }
 
     onWon() {
@@ -70,9 +70,12 @@ export class Victory extends HTMLElement {
         getChildren(this, Banner).forEach(c => c.parentNode?.removeChild(c));
         getChildren(this, Confetti).forEach(c => c.parentNode?.removeChild(c));
 
-        this.append(new Banner(title, message));
+        const banner = new Banner(title, message);
+        banner.classList.add('collapsible', 'collapsed');
+        this.append(banner);
         
         this.show();
+        setTimeout(() => banner.classList.remove('collapsed'), 0);
         this.game.soundController.fanfare();
 
         // appending after show so confetti starts falling while visible
