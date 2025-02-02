@@ -1,13 +1,28 @@
+import { Game } from "./game";
 import { zeroPad } from "./utils";
 
 const decimalPlaces = 2;
 
 export class Timer {
+    game: Game;
     spans: number[] = [];
     lastStart = 0;
 
-    constructor() {
+    constructor(game: Game) {
+        this.game = game;
+        
         document.addEventListener("visibilitychange", this.update.bind(this));
+        this.game.dispatcher.onNewGame(this.onNewGame.bind(this));
+        this.game.dispatcher.onWon(this.onWon.bind(this));
+    }
+
+    onNewGame() {
+        this.clear();
+        this.start();
+    }
+
+    onWon() {
+        this.stop();
     }
 
     update() {

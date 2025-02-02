@@ -34,8 +34,6 @@ export class BucketManager extends HTMLElement {
         this.setStyleProps();
         this.undos = [];
         this.generateBuckets();
-        this.game.timer.clear();
-        this.game.timer.start();
         this.game.dispatcher.newGame();
     }
 

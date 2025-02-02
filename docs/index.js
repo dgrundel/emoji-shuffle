@@ -476,8 +476,6 @@
             this.setStyleProps();
             this.undos = [];
             this.generateBuckets();
-            this.game.timer.clear();
-            this.game.timer.start();
             this.game.dispatcher.newGame();
         }
         setStyleProps() {
@@ -896,10 +894,21 @@
 
     const decimalPlaces = 2;
     class Timer {
+        game;
         spans = [];
         lastStart = 0;
-        constructor() {
+        constructor(game) {
+            this.game = game;
             document.addEventListener("visibilitychange", this.update.bind(this));
+            this.game.dispatcher.onNewGame(this.onNewGame.bind(this));
+            this.game.dispatcher.onWon(this.onWon.bind(this));
+        }
+        onNewGame() {
+            this.clear();
+            this.start();
+        }
+        onWon() {
+            this.stop();
         }
         update() {
             if (document.hidden) {
@@ -1039,7 +1048,7 @@
             this.config = config;
             this.dispatcher = new Dispatcher(this);
             this.soundController = new SoundController(this);
-            this.timer = new Timer();
+            this.timer = new Timer(this);
         }
         connectedCallback() {
             this.statusBar = new StatusBar(this);
@@ -1054,7 +1063,6 @@
             this.resetGame();
         }
         onWon() {
-            this.timer.stop();
             this.append(new Victory(this));
         }
         async resetGame() {

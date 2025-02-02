@@ -34,7 +34,7 @@ export class Game extends HTMLElement {
         this.config = config;
         this.dispatcher = new Dispatcher(this);
         this.soundController = new SoundController(this);
-        this.timer = new Timer();
+        this.timer = new Timer(this);
     }
 
     connectedCallback() {
@@ -53,8 +53,6 @@ export class Game extends HTMLElement {
     }
 
     onWon() {
-        this.timer.stop();
-
         this.append(new Victory(this));
     }
 
