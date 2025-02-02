@@ -50,10 +50,8 @@ export const simpleDialog = (config: SimpleDialogConfig): Dialog => {
         }]
 
     const { root, refs } = createDom({
-        name: 'div',
         classes: ['flex-col'],
         children: [ config.content, {
-            name: 'div',
             classes: ['flex-row'],
             children: buttons.map((b, i) => ({
                 name: 'button',

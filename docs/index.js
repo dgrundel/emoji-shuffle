@@ -233,7 +233,7 @@
         return dom.root;
     };
     const createDom = (dom) => {
-        const root = document.createElement(dom.name);
+        const root = document.createElement(dom.name || 'div');
         const refs = {};
         if (dom.ref) {
             refs[dom.ref] = root;
@@ -670,10 +670,8 @@
                     handler: () => true,
                 }];
         const { root, refs } = createDom({
-            name: 'div',
             classes: ['flex-col'],
             children: [config.content, {
-                    name: 'div',
                     classes: ['flex-row'],
                     children: buttons.map((b, i) => ({
                         name: 'button',
@@ -877,7 +875,6 @@
             this.game.dispatcher.onWon(this.onWon.bind(this));
             this.game.dispatcher.onNewGame(this.onNewGame.bind(this));
             const currDom = createDom({
-                name: 'div',
                 classes: ['status-item'],
                 textContent: 'Current streak: ',
                 children: [{
@@ -888,7 +885,6 @@
             this.append(currDom.root);
             this.currentStreakDisplay = currDom.refs['display'];
             const best = createDom({
-                name: 'div',
                 classes: ['status-item'],
                 textContent: 'Best streak: ',
                 children: [{
@@ -1006,13 +1002,10 @@
         }
         connectedCallback() {
             const { root } = createDom({
-                name: 'div',
                 classes: ['banner-content'],
                 children: [{
-                        name: 'div',
                         textContent: this.title,
                     }, {
-                        name: 'div',
                         classes: ['banner-subtitle'],
                         textContent: this.subtitle,
                     }]
@@ -1145,7 +1138,6 @@
                 const dialog = simpleDialog({
                     game: this,
                     content: {
-                        name: 'div',
                         textContent: 'Are you sure?',
                     },
                     buttons: [{

@@ -20,7 +20,6 @@ export class StatusBar extends HTMLElement {
         this.game.dispatcher.onNewGame(this.onNewGame.bind(this));
 
         const currDom = createDom({
-            name: 'div',
             classes: ['status-item'],
             textContent: 'Current streak: ',
             children: [{
@@ -32,7 +31,6 @@ export class StatusBar extends HTMLElement {
         this.currentStreakDisplay = currDom.refs['display'];
 
         const best = createDom({
-            name: 'div',
             classes: ['status-item'],
             textContent: 'Best streak: ',
             children: [{

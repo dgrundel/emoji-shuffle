@@ -79,7 +79,6 @@ export class Game extends HTMLElement {
             const dialog = simpleDialog({
                 game: this,
                 content: {
-                    name: 'div',
                     textContent: 'Are you sure?',
                 },
                 buttons: [{

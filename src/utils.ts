@@ -144,7 +144,7 @@ export const createCheckbox = (opts: CreateCheckboxOpts): HTMLElement => {
 };
 
 export interface DomStruct {
-    name: string;
+    name?: string;
     ref?: string;
     textContent?: string;
     classes?: string[];
@@ -158,7 +158,7 @@ export interface CreatedDom {
 }
 
 export const createDom = (dom: DomStruct): CreatedDom => {
-    const root = document.createElement(dom.name);
+    const root = document.createElement(dom.name || 'div');
     const refs: Record<string, HTMLElement> = {};
 
     if (dom.ref) {
