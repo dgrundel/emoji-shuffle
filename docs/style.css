@@ -211,6 +211,7 @@ g-dialog {
     z-index: 1000;
     align-content: center;
     text-align: center;
+    backdrop-filter: blur(8px);
     
     .dialog-wrap {
         display: inline-flex;

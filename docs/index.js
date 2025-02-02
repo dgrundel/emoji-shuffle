@@ -641,23 +641,43 @@
     }
 
     class Dialog extends HTMLElement {
+        // should match largest animation delay on dialog element
+        static animationDelay = 200;
+        connectedPromise;
+        connectedResolver;
+        pendingActions = [];
         wrap;
         constructor() {
             super();
             this.classList.add('collapsible');
             this.hide();
-            this.wrap = document.createElement('div');
-            this.wrap.classList.add('dialog-wrap');
-            this.append(this.wrap);
+            this.connectedPromise = new Promise(resolve => this.connectedResolver = resolve);
+            this.wrap = this.applyWrap();
+        }
+        applyWrap() {
+            const wrap = document.createElement('div');
+            wrap.classList.add('dialog-wrap');
+            this.append(wrap);
             this.append = (...nodes) => {
                 this.wrap.append(...nodes);
             };
+            return wrap;
+        }
+        connectedCallback() {
+            this.connectedResolver(this);
+        }
+        onConnect(fn) {
+            this.connectedPromise.then(fn);
         }
         show() {
             this.classList.remove('collapsed');
         }
         hide() {
             this.classList.add('collapsed');
+        }
+        destroy() {
+            this.hide();
+            setTimeout(() => this.parentElement?.removeChild(this), Dialog.animationDelay);
         }
     }
     const simpleDialog = (config) => {
@@ -687,7 +707,12 @@
                 sound.altClick();
                 const hide = b.handler();
                 if (hide !== false) {
-                    dialog.hide();
+                    if (config.destroy === true) {
+                        dialog.destroy();
+                    }
+                    else {
+                        dialog.hide();
+                    }
                 }
             });
         });
@@ -1132,10 +1157,10 @@
             return new Promise(resolve => {
                 const done = (b) => {
                     resolve(b);
-                    setTimeout(() => dialog.parentElement?.removeChild(dialog), 200);
                     return true; // close dialog
                 };
                 const dialog = simpleDialog({
+                    destroy: true,
                     game: this,
                     content: {
                         children: [{
@@ -1155,7 +1180,7 @@
                         }]
                 });
                 this.append(dialog);
-                dialog.show();
+                dialog.onConnect(d => d.show());
             });
         }
     }

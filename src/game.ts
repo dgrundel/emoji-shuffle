@@ -72,11 +72,11 @@ export class Game extends HTMLElement {
         return new Promise(resolve => {
             const done = (b: boolean): boolean => {
                 resolve(b);
-                setTimeout(() => dialog.parentElement?.removeChild(dialog), 200);
                 return true; // close dialog
             };
 
             const dialog = simpleDialog({
+                destroy: true,
                 game: this,
                 content: {
                     children: [{
@@ -97,7 +97,7 @@ export class Game extends HTMLElement {
             });
             
             this.append(dialog);
-            dialog.show();
+            dialog.onConnect(d => d.show());
         });
     }
 }

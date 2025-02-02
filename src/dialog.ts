@@ -3,6 +3,12 @@ import { createDom, DomStruct } from "./utils";
 
 
 export class Dialog extends HTMLElement {
+    // should match largest animation delay on dialog element
+    static animationDelay = 200;
+
+    connectedPromise: Promise<Dialog>;
+    connectedResolver?: (d: Dialog) => void;
+    pendingActions: (() => void)[] = [];
     wrap: HTMLElement
     
     constructor() {
@@ -11,12 +17,27 @@ export class Dialog extends HTMLElement {
         this.classList.add('collapsible');
         this.hide();
 
-        this.wrap = document.createElement('div');
-        this.wrap.classList.add('dialog-wrap');
-        this.append(this.wrap);
+        this.connectedPromise = new Promise(resolve => this.connectedResolver = resolve);
+
+        this.wrap = this.applyWrap();
+    }
+
+    applyWrap() {
+        const wrap = document.createElement('div');
+        wrap.classList.add('dialog-wrap');
+        this.append(wrap);
         this.append = (...nodes: (Node | string)[]) => {
             this.wrap.append(...nodes);
         }
+        return wrap;
+    }
+
+    connectedCallback() {
+        this.connectedResolver!(this);
+    }
+
+    onConnect(fn: (d: Dialog) => any) {
+        this.connectedPromise.then(fn);
     }
 
     show() {
@@ -25,6 +46,11 @@ export class Dialog extends HTMLElement {
 
     hide() {
         this.classList.add('collapsed');
+    }
+
+    destroy() {
+        this.hide();
+        setTimeout(() => this.parentElement?.removeChild(this), Dialog.animationDelay);
     }
 }
 
@@ -36,6 +62,7 @@ export interface SimpleDialogConfig {
         textContent: string,
         handler: () => boolean | undefined,
     }[],
+    destroy?: boolean,
 }
 
 export const simpleDialog = (config: SimpleDialogConfig): Dialog => {
@@ -69,7 +96,11 @@ export const simpleDialog = (config: SimpleDialogConfig): Dialog => {
             sound.altClick();
             const hide = b.handler();
             if (hide !== false) {
-                dialog.hide();
+                if (config.destroy === true) {
+                    dialog.destroy();
+                } else {
+                    dialog.hide();
+                }
             }
         });
     });
