@@ -313,11 +313,32 @@ game-banner {
         transform: rotate(-8deg);
         border: .5rem solid rgba(255,255,255,.25);
         text-align: center;
+        position: relative;
+
+        /* shimmery effect */
+        &::before {
+            content: ' ';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: linear-gradient(-45deg, transparent 40%, rgba(250, 250, 250, 0.2) 50%, transparent 60%);
+            background-size: 300%;
+            background-position-x: 100%;
+            animation: shimmer 2s infinite linear;
+        }
     }
 
     .banner-subtitle {
         font-weight: 400;
         font-size: .55em;
         text-transform: none;
+    }
+}
+
+@keyframes shimmer {
+    to {
+       background-position-x: 0%
     }
 }
