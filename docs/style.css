@@ -159,7 +159,7 @@ emoji-game-controls {
     justify-content: center;
 }
 
-emoji-game-config {
+g-dialog {
     position: fixed;
     top: 0;
     right: 0;
@@ -173,7 +173,7 @@ emoji-game-config {
     transition: transform 200ms ease-in-out,
         opacity 150ms ease-in-out;
     
-    .config-wrap {
+    .dialog-wrap {
         display: inline-flex;
         flex-direction: column;
         justify-content: center;

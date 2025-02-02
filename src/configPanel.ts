@@ -1,9 +1,11 @@
 import { BucketManager } from "./bucketManager";
+import { Dialog } from "./dialog";
 import { Game } from "./game";
 import { createCheckbox, createRange } from "./utils";
 
 export class ConfigPanel extends HTMLElement {
     game: Game;
+    dialog?: Dialog;
 
     constructor(game: Game) {
         super();
@@ -12,19 +14,20 @@ export class ConfigPanel extends HTMLElement {
     }
 
     show() {
-        this.classList.remove('hide');
+        this.dialog?.show();
     }
 
     hide() {
-        this.classList.add('hide');
+        this.dialog?.hide();
     }
 
     connectedCallback() {
-        const wrap = document.createElement('div');
-        wrap.classList.add('config-wrap');
+        const dialog = new Dialog();
+        this.dialog = dialog;
+        this.append(dialog);
 
         // emojis [5 - ?]
-        wrap.append(createRange({
+        dialog.append(createRange({
             label: 'Emoji Count',
             min: 5,
             max: BucketManager.emojiCandidates.length,
@@ -37,7 +40,7 @@ export class ConfigPanel extends HTMLElement {
         }));
 
         // spares [1-4]
-        wrap.append(createRange({
+        dialog.append(createRange({
             label: 'Spare Buckets',
             min: 1,
             max: 4,
@@ -50,7 +53,7 @@ export class ConfigPanel extends HTMLElement {
         }));
 
         // height [4 - 6]
-        wrap.append(createRange({
+        dialog.append(createRange({
             label: 'Bucket Height',
             min: 3,
             max: 6,
@@ -62,7 +65,7 @@ export class ConfigPanel extends HTMLElement {
             }
         }));
 
-        wrap.append(createCheckbox({
+        dialog.append(createCheckbox({
             label: 'Sound effects',
             checked: this.game.config.soundEnabled,
             handler: checked => {
@@ -77,8 +80,7 @@ export class ConfigPanel extends HTMLElement {
             this.game.soundController.altClick();
             this.hide();
         });
-        wrap.append(closeBtn);
+        dialog.append(closeBtn);
 
-        this.append(wrap);
     }
 }

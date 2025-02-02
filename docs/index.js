@@ -642,12 +642,17 @@
         }
     }
 
-    class ConfigPanel extends HTMLElement {
-        game;
-        constructor(game) {
+    class Dialog extends HTMLElement {
+        wrap;
+        constructor() {
             super();
-            this.game = game;
             this.hide();
+            this.wrap = document.createElement('div');
+            this.wrap.classList.add('dialog-wrap');
+            this.append(this.wrap);
+            this.append = (...nodes) => {
+                this.wrap.append(...nodes);
+            };
         }
         show() {
             this.classList.remove('hide');
@@ -655,11 +660,28 @@
         hide() {
             this.classList.add('hide');
         }
+    }
+
+    class ConfigPanel extends HTMLElement {
+        game;
+        dialog;
+        constructor(game) {
+            super();
+            this.game = game;
+            this.hide();
+        }
+        show() {
+            this.dialog?.show();
+        }
+        hide() {
+            this.dialog?.hide();
+        }
         connectedCallback() {
-            const wrap = document.createElement('div');
-            wrap.classList.add('config-wrap');
+            const dialog = new Dialog();
+            this.dialog = dialog;
+            this.append(dialog);
             // emojis [5 - ?]
-            wrap.append(createRange({
+            dialog.append(createRange({
                 label: 'Emoji Count',
                 min: 5,
                 max: BucketManager.emojiCandidates.length,
@@ -671,7 +693,7 @@
                 }
             }));
             // spares [1-4]
-            wrap.append(createRange({
+            dialog.append(createRange({
                 label: 'Spare Buckets',
                 min: 1,
                 max: 4,
@@ -683,7 +705,7 @@
                 }
             }));
             // height [4 - 6]
-            wrap.append(createRange({
+            dialog.append(createRange({
                 label: 'Bucket Height',
                 min: 3,
                 max: 6,
@@ -694,7 +716,7 @@
                     this.game.newGame();
                 }
             }));
-            wrap.append(createCheckbox({
+            dialog.append(createCheckbox({
                 label: 'Sound effects',
                 checked: this.game.config.soundEnabled,
                 handler: checked => {
@@ -708,8 +730,7 @@
                 this.game.soundController.altClick();
                 this.hide();
             });
-            wrap.append(closeBtn);
-            this.append(wrap);
+            dialog.append(closeBtn);
         }
     }
 
@@ -1040,7 +1061,7 @@
             await this.manager?.reset();
         }
         async newGame() {
-            getChildren(this, Victory);
+            getChildren(this, Victory).forEach(c => c.parentNode?.removeChild(c));
             await this.manager?.regenerate();
         }
     }
@@ -1055,6 +1076,7 @@
     customElements.define('confetti-shower', Confetti);
     customElements.define('game-banner', Banner);
     customElements.define('game-victory', Victory);
+    customElements.define('g-dialog', Dialog);
     const gameConfig = persist({
         emojiCount: 7,
         emptyCount: 2,
