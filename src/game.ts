@@ -60,12 +60,15 @@ export class Game extends HTMLElement {
     async newGame() {
         const confirmed = await this.confirmNewGame();
         if (confirmed) {
-            // getChildren(this, Victory).forEach(c => c.parentNode?.removeChild(c));
             await this.manager?.regenerate();
         }
     }
 
     async confirmNewGame(): Promise<boolean> {
+        if (this.statusBar && !this.statusBar.newGameShouldResetStreak()) {
+            return true;
+        }
+
         return new Promise(resolve => {
             const done = (b: boolean): boolean => {
                 resolve(b);

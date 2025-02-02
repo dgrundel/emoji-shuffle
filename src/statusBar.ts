@@ -70,8 +70,12 @@ export class StatusBar extends HTMLElement {
         this.updateUI();
     }
 
+    newGameShouldResetStreak(): boolean {
+        return this.currentStreak > 0 && !this.prevWin;
+    }
+
     onNewGame() {
-        if (!this.prevWin) {
+        if (this.newGameShouldResetStreak()) {
             this.currentStreak = 0;
             this.updateUI();
         }

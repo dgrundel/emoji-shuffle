@@ -920,8 +920,11 @@
             this.incrementStreak();
             this.updateUI();
         }
+        newGameShouldResetStreak() {
+            return this.currentStreak > 0 && !this.prevWin;
+        }
         onNewGame() {
-            if (!this.prevWin) {
+            if (this.newGameShouldResetStreak()) {
                 this.currentStreak = 0;
                 this.updateUI();
             }
@@ -1126,11 +1129,13 @@
         async newGame() {
             const confirmed = await this.confirmNewGame();
             if (confirmed) {
-                // getChildren(this, Victory).forEach(c => c.parentNode?.removeChild(c));
                 await this.manager?.regenerate();
             }
         }
         async confirmNewGame() {
+            if (this.statusBar && !this.statusBar.newGameShouldResetStreak()) {
+                return true;
+            }
             return new Promise(resolve => {
                 const done = (b) => {
                     resolve(b);
