@@ -372,6 +372,14 @@ game-banner {
     }
 }
 
+.version-text {
+    font-size: .5em;
+    position: fixed;
+    bottom: 1rem;
+    left: 0;
+    right: 0;
+}
+
 @keyframes shimmer {
     to {
        background-position-x: 0%

@@ -3,6 +3,9 @@ import { Dialog } from "./dialog";
 import { Game } from "./game";
 import { createCheckbox, createRange } from "./utils";
 
+// @ts-ignore
+const appVersion: string = VERSION;
+
 export class ConfigPanel extends HTMLElement {
     game: Game;
     dialog?: Dialog;
@@ -82,5 +85,9 @@ export class ConfigPanel extends HTMLElement {
         });
         dialog.append(closeBtn);
 
+        const verText = document.createElement('span');
+        verText.textContent = `v${appVersion}`;
+        verText.classList.add('version-text');
+        dialog.append(verText);
     }
 }

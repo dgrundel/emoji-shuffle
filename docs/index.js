@@ -1,6 +1,8 @@
 (function () {
     'use strict';
 
+    const VERSION = "1.0.1";
+
     /**
      * This code adapted from
      * https://codepen.io/jonathanbell/pen/OvYVYw
@@ -720,6 +722,8 @@
         return dialog;
     };
 
+    // @ts-ignore
+    const appVersion = VERSION;
     class ConfigPanel extends HTMLElement {
         game;
         dialog;
@@ -789,6 +793,10 @@
                 this.hide();
             });
             dialog.append(closeBtn);
+            const verText = document.createElement('span');
+            verText.textContent = `v${appVersion}`;
+            verText.classList.add('version-text');
+            dialog.append(verText);
         }
     }
 
