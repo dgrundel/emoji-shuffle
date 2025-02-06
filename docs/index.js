@@ -1096,8 +1096,6 @@
             else {
                 message += ` ⚡ Best: ${Timer.toHuman(stats.bestTime)}`;
             }
-            getChildren(this, Banner).forEach(c => c.parentNode?.removeChild(c));
-            getChildren(this, Confetti).forEach(c => c.parentNode?.removeChild(c));
             const banner = new Banner(title, message);
             banner.classList.add('collapsible', 'collapsed');
             this.append(banner);
@@ -1109,6 +1107,8 @@
         }
         onNewGame() {
             this.hide();
+            getChildren(this, Banner).forEach(c => c.parentNode?.removeChild(c));
+            getChildren(this, Confetti).forEach(c => c.parentNode?.removeChild(c));
         }
     }
 
