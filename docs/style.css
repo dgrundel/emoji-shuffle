@@ -77,15 +77,9 @@ emoji-game {
     right: 0;
     bottom: 0;
     left: 0;
-    
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr auto;
-    grid-template-areas: 
-        "status"
-        "buckets"
-        "controls";
-    justify-items: center;
+
+    text-align: center;
+    align-content: center;
 }
 
 emoji-bucket-manager {
@@ -104,7 +98,7 @@ emoji-bucket-manager {
     
     width: var(--bucket-container-width);
 
-    grid-area: buckets;
+    display: inline-block;
     align-content: center;
     text-align: center;
 }
@@ -190,7 +184,10 @@ confetti-shower {
 }
 
 emoji-game-controls {
-    grid-area: controls;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
 
     font-weight: 500;
     text-align: center;
@@ -306,7 +303,11 @@ button {
 }
 
 emoji-game-status-bar {
-    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
     display: flex;
     justify-content: center;
     gap: .5rem;
