@@ -452,6 +452,38 @@
         }
     }
 
+    const persist = (t, storageKey) => {
+        const json = localStorage.getItem(storageKey);
+        const values = Object.assign({}, t);
+        if (json) {
+            try {
+                const stored = JSON.parse(json);
+                Object.assign(values, stored);
+            }
+            catch (e) {
+                console.error(`error parsing json for "${storageKey}"`, e);
+            }
+        }
+        const result = {};
+        Object.keys(values).forEach(key => {
+            Object.defineProperty(result, key, {
+                get() {
+                    return values[key];
+                },
+                set(newValue) {
+                    values[key] = newValue;
+                    localStorage.setItem(storageKey, JSON.stringify(values));
+                },
+                enumerable: true,
+                configurable: true,
+            });
+        });
+        return result;
+    };
+
+    const savedState = persist({
+        serialized: ''
+    }, 'game-manager-state');
     class BucketManager extends HTMLElement {
         static emojiCandidates = [
             '🔥', '🙌', '💯', '😱',
@@ -471,13 +503,19 @@
         }
         connectedCallback() {
             this.game.dispatcher.onMoved(this.onMoved.bind(this));
-            this.regenerate();
+            this.regenerate(savedState.serialized);
         }
-        async regenerate() {
+        async regenerate(serialized) {
             clearChildren(this);
             this.setStyleProps();
             this.undos = [];
-            this.generateBuckets();
+            if (serialized && serialized.length > 0) {
+                this.deserialize(serialized);
+            }
+            else {
+                this.generateBuckets();
+                savedState.serialized = this.serialize();
+            }
             this.game.dispatcher.newGame();
         }
         setStyleProps() {
@@ -639,6 +677,31 @@
         }
         onMoved() {
             this.checkSuccess();
+        }
+        serialize() {
+            const obj = getChildren(this, Bucket).map(bucket => {
+                return getChildren(bucket, Bubble).map(bubble => bubble.emoji);
+            });
+            return JSON.stringify(obj);
+        }
+        deserialize(s) {
+            const buckets = JSON.parse(s);
+            if (!Array.isArray(buckets)) {
+                throw new Error(`serialized string could not be parsed: ${s}`);
+            }
+            buckets.forEach(bubbles => {
+                if (!Array.isArray(bubbles)) {
+                    throw new Error(`invalid serialized string [bucket]: ${bubbles}`);
+                }
+                const b = new Bucket(this);
+                this.append(b);
+                bubbles.forEach(emoji => {
+                    if (typeof emoji !== 'string') {
+                        throw new Error(`invalid serialized string [bubble]: ${emoji}`);
+                    }
+                    b.append(new Bubble(emoji));
+                });
+            });
         }
     }
 
@@ -860,46 +923,17 @@
         }
     }
 
-    const persist = (t, storageKey) => {
-        const json = localStorage.getItem(storageKey);
-        const values = Object.assign({}, t);
-        if (json) {
-            try {
-                const stored = JSON.parse(json);
-                Object.assign(values, stored);
-            }
-            catch (e) {
-                console.error(`error parsing json for "${storageKey}"`, e);
-            }
-        }
-        const result = {};
-        Object.keys(values).forEach(key => {
-            Object.defineProperty(result, key, {
-                get() {
-                    return values[key];
-                },
-                set(newValue) {
-                    values[key] = newValue;
-                    localStorage.setItem(storageKey, JSON.stringify(values));
-                },
-                enumerable: true,
-                configurable: true,
-            });
-        });
-        return result;
-    };
-
     const stats = persist({
+        currentStreak: 0,
         bestStreak: 0,
         bestTime: 0,
     }, 'game-stats');
 
     class StatusBar extends HTMLElement {
         game;
-        currentStreak = 0;
         currentStreakDisplay;
         bestStreakDisplay;
-        prevWin = false;
+        prevWin = true; // start true so that initial new game event doesn't break streak
         constructor(game) {
             super();
             this.game = game;
@@ -930,15 +964,15 @@
             this.updateUI();
         }
         incrementStreak() {
-            this.currentStreak++;
-            if (this.currentStreak > stats.bestStreak) {
-                stats.bestStreak = this.currentStreak;
+            stats.currentStreak++;
+            if (stats.currentStreak > stats.bestStreak) {
+                stats.bestStreak = stats.currentStreak;
             }
         }
         // TODO: should use data binding to avoid this
         updateUI() {
             if (this.currentStreakDisplay) {
-                this.currentStreakDisplay.textContent = this.currentStreak.toFixed(0);
+                this.currentStreakDisplay.textContent = stats.currentStreak.toFixed(0);
             }
             if (this.bestStreakDisplay) {
                 this.bestStreakDisplay.textContent = stats.bestStreak.toFixed(0);
@@ -950,11 +984,11 @@
             this.updateUI();
         }
         newGameShouldResetStreak() {
-            return this.currentStreak > 0 && !this.prevWin;
+            return stats.currentStreak > 0 && !this.prevWin;
         }
         onNewGame() {
             if (this.newGameShouldResetStreak()) {
-                this.currentStreak = 0;
+                stats.currentStreak = 0;
                 this.updateUI();
             }
             this.prevWin = false;
@@ -1147,7 +1181,6 @@
             this.append(this.manager);
             this.append(this.configPanel);
             this.append(new Victory(this));
-            this.resetGame();
         }
         async resetGame() {
             await this.manager?.reset();

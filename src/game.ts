@@ -49,8 +49,6 @@ export class Game extends HTMLElement {
         this.append(this.manager);
         this.append(this.configPanel);
         this.append(new Victory(this));
-
-        this.resetGame();
     }
 
     async resetGame() {

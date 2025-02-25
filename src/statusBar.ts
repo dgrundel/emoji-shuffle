@@ -4,10 +4,9 @@ import { createDom } from "./utils";
 
 export class StatusBar extends HTMLElement {
     game: Game;
-    private currentStreak: number = 0;
     currentStreakDisplay?: HTMLElement;
     bestStreakDisplay?: HTMLElement;
-    prevWin: boolean = false;
+    prevWin: boolean = true; // start true so that initial new game event doesn't break streak
 
     constructor(game: Game) {
         super();
@@ -45,17 +44,17 @@ export class StatusBar extends HTMLElement {
     }
 
     incrementStreak() {
-        this.currentStreak++;
+        stats.currentStreak++;
 
-        if (this.currentStreak > stats.bestStreak) {
-            stats.bestStreak = this.currentStreak;
+        if (stats.currentStreak > stats.bestStreak) {
+            stats.bestStreak = stats.currentStreak;
         }
     }
 
     // TODO: should use data binding to avoid this
     updateUI() {
         if (this.currentStreakDisplay) {
-            this.currentStreakDisplay.textContent = this.currentStreak.toFixed(0);
+            this.currentStreakDisplay.textContent = stats.currentStreak.toFixed(0);
         }
         if (this.bestStreakDisplay) {
             this.bestStreakDisplay.textContent = stats.bestStreak.toFixed(0);
@@ -69,12 +68,12 @@ export class StatusBar extends HTMLElement {
     }
 
     newGameShouldResetStreak(): boolean {
-        return this.currentStreak > 0 && !this.prevWin;
+        return stats.currentStreak > 0 && !this.prevWin;
     }
 
     onNewGame() {
         if (this.newGameShouldResetStreak()) {
-            this.currentStreak = 0;
+            stats.currentStreak = 0;
             this.updateUI();
         }
         this.prevWin = false;

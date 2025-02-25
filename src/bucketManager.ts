@@ -2,7 +2,12 @@ import { Bubble } from "./bubble";
 import { Bucket } from "./bucket";
 import { MoveType } from "./dispatcher";
 import { Game, GameConfig } from "./game";
+import { persist } from "./persisted";
 import { animate, AnimatedAction, clearChildren, doTimes, getChildren, shake, takeRandom } from "./utils";
+
+const savedState = persist({
+    serialized: ''
+}, 'game-manager-state');
 
 export class BucketManager extends HTMLElement {
     static emojiCandidates = [
@@ -26,14 +31,19 @@ export class BucketManager extends HTMLElement {
 
     connectedCallback() {
         this.game.dispatcher.onMoved(this.onMoved.bind(this));
-        this.regenerate();
+        this.regenerate(savedState.serialized);
     }
 
-    async regenerate() {
+    async regenerate(serialized?: string) {
         clearChildren(this);
         this.setStyleProps();
         this.undos = [];
-        this.generateBuckets();
+        if (serialized && serialized.length > 0) {
+            this.deserialize(serialized);
+        } else {
+            this.generateBuckets();
+            savedState.serialized = this.serialize();
+        }
         this.game.dispatcher.newGame();
     }
 
@@ -228,5 +238,37 @@ export class BucketManager extends HTMLElement {
 
     onMoved() {
         this.checkSuccess();
+    }
+
+    serialize(): string {
+        const obj: string[][] = getChildren(this, Bucket).map(bucket => {
+            return getChildren(bucket, Bubble).map(bubble => bubble.emoji)
+        });
+
+        return JSON.stringify(obj);
+    }
+
+    deserialize(s: string) {
+        const buckets = JSON.parse(s);
+        if (!Array.isArray(buckets)) {
+            throw new Error(`serialized string could not be parsed: ${s}`);
+        }
+
+        buckets.forEach(bubbles => {
+            if (!Array.isArray(bubbles)) {
+                throw new Error(`invalid serialized string [bucket]: ${bubbles}`);
+            }
+
+            const b = new Bucket(this);
+            this.append(b);
+
+            bubbles.forEach(emoji => {
+                if (typeof emoji !== 'string') {
+                    throw new Error(`invalid serialized string [bubble]: ${emoji}`);
+                }   
+
+                b.append(new Bubble(emoji));
+            })
+        });
     }
 }
