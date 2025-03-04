@@ -53,12 +53,12 @@ export class Controls extends HTMLElement {
         });
         this.append(this.newBtn);
 
-        const configBtn = document.createElement('button');
-        configBtn.textContent = '⚙️';
-        configBtn.addEventListener('click', () => {
-            this.game.soundController.click();
-            this.game.configPanel?.show();
-        });
-        this.append(configBtn);
+        // const configBtn = document.createElement('button');
+        // configBtn.textContent = '⚙️';
+        // configBtn.addEventListener('click', () => {
+        //     this.game.soundController.click();
+        //     this.game.configPanel?.show();
+        // });
+        // this.append(configBtn);
     }
 }

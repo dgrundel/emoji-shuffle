@@ -18,18 +18,18 @@ export class StatusBar extends HTMLElement {
         this.game.dispatcher.onWon(this.onWon.bind(this));
         this.game.dispatcher.onNewGame(this.onNewGame.bind(this));
 
-        const currDom = createDom({
+        const streakDom = createDom({
             classes: ['status-item'],
-            textContent: 'Current streak: ',
+            textContent: 'Streak: ',
             children: [{
                 name: 'em',
                 ref: 'display'
             }]
         });
-        this.append(currDom.root);
-        this.currentStreakDisplay = currDom.refs['display'];
+        this.append(streakDom.root);
+        this.currentStreakDisplay = streakDom.refs['display'];
 
-        const best = createDom({
+        const bestStreakDom = createDom({
             classes: ['status-item'],
             textContent: 'Best streak: ',
             children: [{
@@ -37,8 +37,18 @@ export class StatusBar extends HTMLElement {
                 ref: 'display'
             }]
         });
-        this.append(best.root);
-        this.bestStreakDisplay = best.refs['display'];
+        this.append(bestStreakDom.root);
+        this.bestStreakDisplay = bestStreakDom.refs['display'];
+
+        const { root: optionsButton } = createDom({
+            name: 'button',
+            textContent: '⚙️',
+        });
+        optionsButton.addEventListener('click', () => {
+            this.game.soundController.click();
+            this.game.configPanel?.show();
+        });
+        this.append(optionsButton);
 
         this.updateUI();
     }

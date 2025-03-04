@@ -67,8 +67,7 @@ export class BucketManager extends HTMLElement {
 
         // distribute the bubbles into buckets
         doTimes(this.config.emojiCount, () => {
-            const b = new Bucket(this);
-            this.append(b);
+            const b = this.addBucket();
 
             doTimes(this.config.bucketHeight, () => {
                 b.put(takeRandom(bubbles))
@@ -76,10 +75,13 @@ export class BucketManager extends HTMLElement {
         });
 
         // add empty buckets
-        doTimes(this.config.emptyCount, () => {
-            const b = new Bucket(this);
-            this.append(b);
-        });
+        doTimes(this.config.emptyCount, () => this.addBucket());
+    }
+
+    addBucket(): Bucket {
+        const b = new Bucket(this);
+        this.append(b);
+        return b;
     }
 
     hasSelection(): boolean {

@@ -325,6 +325,12 @@ emoji-game-status-bar {
         padding: .3rem;
         background-color: rgba(0, 0, 0, 0.35);
         border-radius: .3rem;
+        align-content: center;
+    }
+
+    button {
+        padding: .3rem 1rem;
+        --border-width: .2rem;
     }
 }
 
